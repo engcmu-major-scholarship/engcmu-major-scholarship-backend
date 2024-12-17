@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { GoogleUserInfo } from './types/GoogleUserInfo';
 import { Repository } from 'typeorm';
-import { Users } from 'src/models/user.entity';
+import { Users } from 'src/models/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './types/TokenPayload';
