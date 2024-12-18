@@ -9,18 +9,16 @@ import {
 import { AuthService } from './auth.service';
 import { Request as ExpressRequest } from 'express';
 import { SignupDTO } from './dtos/signup.dto';
-import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { TokenPayload } from './types/TokenPayload';
+import { SigninDTO } from './dtos/signin.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('signin')
-  async googleSignin(@Request() req: ExpressRequest) {
-    return this.authService.googleSignin(req['user'] as TokenPayload);
+  async googleSignin(@Body() body: SigninDTO) {
+    return this.authService.googleSignin(body.accessToken);
   }
 
   @Post('signup')

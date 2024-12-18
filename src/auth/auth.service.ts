@@ -10,7 +10,6 @@ import { Users } from 'src/models/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './types/TokenPayload';
-import { Role } from './types/Role';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +20,7 @@ export class AuthService {
     private readonly usersRepository: Repository<Users>,
   ) {}
 
-  async validateUser(token: string) {
+  async googleSignin(token: string) {
     const googleUserInfo = await this.getGoogleUserInfo(token);
     const user = await this.usersRepository.findOne({
       where: {
@@ -31,15 +30,12 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return {
+
+    return this.jwtService.sign({
       sub: user.user_id,
       googleAccount: user.google_account,
-      roles: [Role.STUDENT],
-    } as TokenPayload;
-  }
-
-  async googleSignin(user: TokenPayload) {
-    return this.jwtService.sign(user);
+      roles: [],
+    } as TokenPayload);
   }
 
   async googleSignup(token: string, citizenId: string) {
@@ -52,7 +48,7 @@ export class AuthService {
     return this.jwtService.sign({
       sub: newUser.user_id,
       googleAccount: newUser.google_account,
-      roles: [Role.STUDENT],
+      roles: [],
     } as TokenPayload);
   }
 
