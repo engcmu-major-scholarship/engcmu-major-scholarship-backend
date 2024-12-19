@@ -5,8 +5,8 @@ import { Role } from './types/Role';
 import { ROLES_KEY } from 'src/decorators/roles.decorator';
 
 export class RolesGuard extends JwtAuthGuard {
-  constructor(private reflector: Reflector) {
-    super();
+  constructor(protected readonly reflector: Reflector) {
+    super(reflector);
   }
 
   canActivate(context: ExecutionContext) {
