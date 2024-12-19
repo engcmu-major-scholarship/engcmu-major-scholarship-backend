@@ -5,12 +5,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get<string>('DB_HOST'),
@@ -21,7 +23,19 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
         synchronize: true,
         autoLoadEntities: true,
       }),
+    }),
+    S3Module.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        endpoint: configService.get<string>('S3_ENDPOINT'),
+        region: configService.get<string>('S3_REGION'),
+        credentials: {
+          accessKeyId: configService.get<string>('S3_ACCESS_KEY_ID'),
+          secretAccessKey: configService.get<string>('S3_SECRET_ACCESS_KEY'),
+        },
+        forcePathStyle: true,
+      }),
     }),
     AuthModule,
     ScholarshipsModule,
