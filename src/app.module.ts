@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
 
@@ -19,7 +18,6 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
         synchronize: true,
         autoLoadEntities: true,
       }),
