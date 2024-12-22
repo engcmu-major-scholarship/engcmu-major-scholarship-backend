@@ -10,6 +10,7 @@ import { Users } from 'src/models/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './types/TokenPayload';
+import { SignupDTO } from './dtos/signup.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,11 +39,15 @@ export class AuthService {
     } as TokenPayload);
   }
 
-  async googleSignup(token: string, citizenId: string) {
-    const googleUserInfo = await this.getGoogleUserInfo(token);
+  async googleSignup(data: SignupDTO) {
+    const googleUserInfo = await this.getGoogleUserInfo(data.accessToken);
     const user = this.usersRepository.create({
+      citizen_id: data.citizenId,
       google_account: googleUserInfo.email,
-      citizen_id: citizenId,
+      contact_email: data.email,
+      first_name: data.firstName,
+      last_name: data.lastName,
+      phone_number: data.phoneNumber,
     });
     const newUser = await this.usersRepository.save(user);
     return this.jwtService.sign({

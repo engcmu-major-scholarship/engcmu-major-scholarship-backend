@@ -26,7 +26,7 @@ export class AuthController {
   @Public()
   @Post('signup')
   async googleSignup(@Body() body: SignupDTO) {
-    return this.authService.googleSignup(body.accessToken, body.citizenId);
+    return this.authService.googleSignup(body);
   }
 
   @UseGuards(JwtAuthGuard)
