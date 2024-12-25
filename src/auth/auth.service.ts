@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { GoogleUserInfo } from './types/GoogleUserInfo';
 import { Repository } from 'typeorm';
-import { User } from 'src/models/users.entity';
+import { User } from 'src/models/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './types/TokenPayload';
@@ -33,7 +33,7 @@ export class AuthService {
     }
 
     return this.jwtService.sign({
-      sub: user.user_id,
+      sub: user.id,
       googleAccount: user.google_account,
       roles: [],
     } as TokenPayload);
@@ -51,7 +51,7 @@ export class AuthService {
     });
     const newUser = await this.usersRepository.save(user);
     return this.jwtService.sign({
-      sub: newUser.user_id,
+      sub: newUser.id,
       googleAccount: newUser.google_account,
       roles: [],
     } as TokenPayload);

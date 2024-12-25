@@ -1,7 +1,19 @@
-import { Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Scholarship {
   @PrimaryGeneratedColumn()
-  scholarship_id: number;
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  detail_document: string;
+
+  @Column()
+  application_document: string;
 }
