@@ -3,13 +3,13 @@ import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 
 @Injectable()
-export class ScholarshipsService {
+export class ScholarshipService {
   create(createScholarshipDto: CreateScholarshipDto) {
     return 'This action adds a new scholarship';
   }
 
   findAll() {
-    return `This action returns all scholarships`;
+    return `This action returns all scholarship`;
   }
 
   findOne(id: number) {

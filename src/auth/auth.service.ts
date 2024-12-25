@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { GoogleUserInfo } from './types/GoogleUserInfo';
 import { Repository } from 'typeorm';
-import { Users } from 'src/models/users.entity';
+import { User } from 'src/models/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './types/TokenPayload';
@@ -17,8 +17,8 @@ export class AuthService {
   constructor(
     private readonly httpService: HttpService,
     private readonly jwtService: JwtService,
-    @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
   ) {}
 
   async googleSignin(token: string) {

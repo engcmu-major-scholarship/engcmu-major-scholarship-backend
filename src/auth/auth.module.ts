@@ -8,7 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from 'src/models/users.entity';
+import { User } from 'src/models/users.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 
@@ -25,7 +25,7 @@ import { RolesGuard } from './roles.guard';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Users]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
   providers: [

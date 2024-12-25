@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { ScholarshipsModule } from './scholarships/scholarships.module';
 import { S3Module } from './s3/s3.module';
+import { ScholarshipModule } from './scholarship/scholarship.module';
 
 @Module({
   imports: [
@@ -38,7 +38,7 @@ import { S3Module } from './s3/s3.module';
       }),
     }),
     AuthModule,
-    ScholarshipsModule,
+    ScholarshipModule,
   ],
   controllers: [AppController],
   providers: [AppService],
