@@ -3,26 +3,42 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
+import { S3Module } from './s3/s3.module';
+import { ScholarshipModule } from './scholarship/scholarship.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get<string>('DB_HOST'),
-        port: +configService.get<number>('DB_PORT'),
+        port: configService.get<number>('DB_PORT'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
         synchronize: true,
         autoLoadEntities: true,
       }),
-      inject: [ConfigService],
     }),
+    S3Module.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        endpoint: configService.get<string>('S3_ENDPOINT'),
+        region: configService.get<string>('S3_REGION'),
+        credentials: {
+          accessKeyId: configService.get<string>('S3_ACCESS_KEY_ID'),
+          secretAccessKey: configService.get<string>('S3_SECRET_ACCESS_KEY'),
+        },
+        forcePathStyle: true,
+      }),
+    }),
+    AuthModule,
+    ScholarshipModule,
   ],
   controllers: [AppController],
   providers: [AppService],
