@@ -12,26 +12,26 @@ export class User {
   id: string;
 
   @Column()
-  first_name: string;
+  firstName: string;
 
   @Column()
-  last_name: string;
+  lastName: string;
 
   @Column({ unique: true })
-  citizen_id: string;
+  citizenID: string;
 
   @Column({ unique: true })
-  google_account: string;
+  googleAccount: string;
 
   @Column()
-  contact_email: string;
+  contactEmail: string;
 
   @Column()
-  phone_number: string;
+  phoneNumber: string;
 
   @CreateDateColumn()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updatedAt: Date;
 }

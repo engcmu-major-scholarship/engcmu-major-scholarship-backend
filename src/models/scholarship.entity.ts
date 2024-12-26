@@ -12,8 +12,8 @@ export class Scholarship {
   description: string;
 
   @Column()
-  detail_document: string;
+  detailDocument: string;
 
   @Column()
-  application_document: string;
+  applicationDocument: string;
 }

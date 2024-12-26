@@ -25,7 +25,7 @@ export class AuthService {
     const googleUserInfo = await this.getGoogleUserInfo(token);
     const user = await this.usersRepository.findOne({
       where: {
-        google_account: googleUserInfo.email,
+        googleAccount: googleUserInfo.email,
       },
     });
     if (!user) {
@@ -34,7 +34,7 @@ export class AuthService {
 
     return this.jwtService.sign({
       sub: user.id,
-      googleAccount: user.google_account,
+      googleAccount: user.googleAccount,
       roles: [],
     } as TokenPayload);
   }
@@ -42,17 +42,17 @@ export class AuthService {
   async googleSignup(data: SignupDTO) {
     const googleUserInfo = await this.getGoogleUserInfo(data.accessToken);
     const user = this.usersRepository.create({
-      citizen_id: data.citizenId,
-      google_account: googleUserInfo.email,
-      contact_email: data.email,
-      first_name: data.firstName,
-      last_name: data.lastName,
-      phone_number: data.phoneNumber,
+      citizenID: data.citizenId,
+      googleAccount: googleUserInfo.email,
+      contactEmail: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: data.phoneNumber,
     });
     const newUser = await this.usersRepository.save(user);
     return this.jwtService.sign({
       sub: newUser.id,
-      googleAccount: newUser.google_account,
+      googleAccount: newUser.googleAccount,
       roles: [],
     } as TokenPayload);
   }

@@ -1,15 +1,23 @@
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { User } from './user.entity';
+import { Advisor } from './advisor.entity';
 
 @Entity()
 export class Student {
   @PrimaryColumn()
   id: string;
 
-  @Column()
   @OneToOne(() => User, { onDelete: 'RESTRICT', eager: true })
-  user_id: string;
-
-  @OneToOne(() => User, (user) => user.id)
+  @JoinColumn()
   user: User;
+
+  @ManyToOne(() => Advisor, { onDelete: 'RESTRICT', eager: true })
+  @JoinColumn()
+  advisor: Advisor;
 }
