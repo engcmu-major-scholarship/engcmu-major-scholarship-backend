@@ -6,7 +6,7 @@ export class Admin {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, { onDelete: 'RESTRICT', eager: true })
+  @OneToOne(() => User, { onDelete: 'RESTRICT' })
   @JoinColumn()
   user: User;
 }

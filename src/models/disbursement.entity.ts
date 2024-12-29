@@ -12,7 +12,7 @@ export class Disbursement {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Application, { onDelete: 'RESTRICT', eager: true })
+  @OneToOne(() => Application, { onDelete: 'RESTRICT' })
   @JoinColumn()
   application: Application;
 

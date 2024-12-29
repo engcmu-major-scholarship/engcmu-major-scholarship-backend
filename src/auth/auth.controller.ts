@@ -19,7 +19,11 @@ export class AuthController {
   @Public()
   @Post('signin')
   async googleSignin(@Body() body: SigninDTO) {
-    return this.authService.signin(body.accessToken);
+    const token = await this.authService.requestToken(
+      body.authorizationCode,
+      body.redirectUri,
+    );
+    return this.authService.signin(token);
   }
 
   @UseGuards(JwtAuthGuard)

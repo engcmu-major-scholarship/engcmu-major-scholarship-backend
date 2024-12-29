@@ -13,7 +13,7 @@ export class Application {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Student, { onDelete: 'RESTRICT', eager: true })
+  @ManyToOne(() => Student, { onDelete: 'RESTRICT' })
   @JoinColumn()
   student: Student;
 
@@ -23,7 +23,7 @@ export class Application {
   @Column()
   semester: string;
 
-  @ManyToOne(() => Scholarship, { onDelete: 'RESTRICT', eager: true })
+  @ManyToOne(() => Scholarship, { onDelete: 'RESTRICT' })
   @JoinColumn()
   scholarship: Scholarship;
 

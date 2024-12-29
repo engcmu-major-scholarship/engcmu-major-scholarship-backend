@@ -15,10 +15,13 @@ import { Role } from './types/Role';
 import { Student } from 'src/models/student.entity';
 import { Advisor } from 'src/models/advisor.entity';
 import { Admin } from 'src/models/admin.entity';
+import { RequestToken } from './types/RequestToken';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly jwtService: JwtService,
     @InjectRepository(User)
@@ -41,15 +44,15 @@ export class AuthService {
     }
 
     const roles = [];
-    if (this.studentsRepository.findOneBy({ user: user })) {
+    if (await this.studentsRepository.findOneBy({ user: user })) {
       roles.push(Role.STUDENT);
     }
 
-    if (this.advisorsRepository.findOneBy({ user: user })) {
+    if (await this.advisorsRepository.findOneBy({ user: user })) {
       roles.push(Role.ADVISOR);
     }
 
-    if (this.adminsRepository.findOneBy({ user: user })) {
+    if (await this.adminsRepository.findOneBy({ user: user })) {
       roles.push(Role.ADMIN);
     }
 
@@ -62,13 +65,15 @@ export class AuthService {
 
   async signup(token: string) {
     const cmuAccountInfo = await this.getCMUAccountInfo(token);
+
     if (cmuAccountInfo.organization_code !== '06') {
       throw new UnauthorizedException('Unauthorized organization');
     }
+
     const newUser = this.usersRepository.create({
       CMUAccount: cmuAccountInfo.cmuitaccount,
     });
-    const savedUser = await this.usersRepository.save(newUser);
+    await this.usersRepository.save(newUser);
 
     const roles = [];
 
@@ -102,10 +107,35 @@ export class AuthService {
     }
 
     return this.jwtService.sign({
-      sub: savedUser.id,
-      CMUAccount: savedUser.CMUAccount,
+      sub: newUser.id,
+      CMUAccount: newUser.CMUAccount,
       roles: roles,
     } as TokenPayload);
+  }
+
+  async requestToken(code: string, redirectUri: string) {
+    try {
+      return (
+        await this.httpService.axiosRef.post<RequestToken>(
+          `https://login.microsoftonline.com/${this.configService.get('CMU_MS_TENANT_ID')}/oauth2/v2.0/token`,
+          {
+            client_id: this.configService.get('CMU_ENTRA_CLIENT_ID'),
+            client_secret: this.configService.get('CMU_ENTRA_CLIENT_SECRET'),
+            code: code,
+            scope: 'api://cmu/.default',
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code',
+          },
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        )
+      ).data.access_token;
+    } catch {
+      throw new BadRequestException('Invalid authorization code');
+    }
   }
 
   async getCMUAccountInfo(token: string) {

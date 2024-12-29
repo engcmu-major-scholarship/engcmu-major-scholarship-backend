@@ -20,11 +20,11 @@ export class Student {
   @Column()
   lastName: string;
 
-  @OneToOne(() => User, { onDelete: 'RESTRICT', eager: true })
+  @OneToOne(() => User, { onDelete: 'RESTRICT' })
   @JoinColumn()
   user: User;
 
-  @ManyToOne(() => Advisor, { onDelete: 'RESTRICT', eager: true })
+  @ManyToOne(() => Advisor, { onDelete: 'RESTRICT' })
   @JoinColumn()
   advisor: Advisor;
 
