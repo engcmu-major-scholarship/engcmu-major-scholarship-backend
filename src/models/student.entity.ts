@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -13,6 +14,12 @@ export class Student {
   @PrimaryColumn()
   id: string;
 
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
   @OneToOne(() => User, { onDelete: 'RESTRICT', eager: true })
   @JoinColumn()
   user: User;
@@ -20,4 +27,10 @@ export class Student {
   @ManyToOne(() => Advisor, { onDelete: 'RESTRICT', eager: true })
   @JoinColumn()
   advisor: Advisor;
+
+  @Column({ nullable: true })
+  studentIdCard: string;
+
+  @Column({ nullable: true })
+  bookBank: string;
 }

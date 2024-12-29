@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request as ExpressRequest } from 'express';
-import { SignupDTO } from './dtos/signup.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { SigninDTO } from './dtos/signin.dto';
 import { Public } from 'src/decorators/public.decorator';
@@ -20,13 +19,7 @@ export class AuthController {
   @Public()
   @Post('signin')
   async googleSignin(@Body() body: SigninDTO) {
-    return this.authService.googleSignin(body.accessToken);
-  }
-
-  @Public()
-  @Post('signup')
-  async googleSignup(@Body() body: SignupDTO) {
-    return this.authService.googleSignup(body);
+    return this.authService.signin(body.accessToken);
   }
 
   @UseGuards(JwtAuthGuard)

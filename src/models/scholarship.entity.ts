@@ -12,8 +12,17 @@ export class Scholarship {
   description: string;
 
   @Column()
+  requirements: string;
+
+  @Column({ nullable: true, default: null })
+  amount: number;
+
+  @Column()
   detailDocument: string;
 
   @Column()
   applicationDocument: string;
+
+  @Column()
+  published: boolean;
 }

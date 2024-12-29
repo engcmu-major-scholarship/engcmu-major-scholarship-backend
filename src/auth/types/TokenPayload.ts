@@ -2,7 +2,7 @@ import { Role } from './Role';
 
 export type TokenPayload = {
   sub: string;
-  googleAccount: string;
+  CMUAccount: string;
   roles: Role[];
   iat?: number;
   exp?: number;
