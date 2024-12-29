@@ -11,6 +11,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/models/user.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
+import { Student } from 'src/models/student.entity';
+import { Advisor } from 'src/models/advisor.entity';
+import { Admin } from 'src/models/admin.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { RolesGuard } from './roles.guard';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Student, Advisor, Admin]),
   ],
   controllers: [AuthController],
   providers: [

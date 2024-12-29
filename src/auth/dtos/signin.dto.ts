@@ -5,5 +5,10 @@ export class SigninDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  accessToken: string;
+  authorizationCode: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  redirectUri: string;
 }

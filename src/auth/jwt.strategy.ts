@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    configService: ConfigService,
+    readonly configService: ConfigService,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {
@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
     return {
       sub: payload.sub,
-      googleAccount: payload.googleAccount,
+      CMUAccount: payload.CMUAccount,
       roles: payload.roles,
     } as TokenPayload;
   }

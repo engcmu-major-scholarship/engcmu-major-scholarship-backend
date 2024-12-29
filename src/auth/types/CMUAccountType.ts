@@ -1,0 +1,12 @@
+export enum CMUAccountType {
+  ALUMNI_ACCOUNT = 'AlumAcc',
+  EMPLOYEE_RESIGN_ACCOUNT = 'EmpResiAcc',
+  MANAGER_ACCOUNT = 'ManAcc',
+  MIS_EMPLOYEE = 'EmpAcc',
+  NON_MIS_EMPLOYEE = 'NonMISEmpAcc',
+  ORGANIZATION_ACCOUNT = 'OrgAcc',
+  PROJECT_ACCOUNT = 'ProjAcc',
+  RETIRED_EMPLOYEE = 'RetEmpAcc',
+  STUDENT_ACCOUNT = 'StdAcc',
+  VIP_ACCOUNT = 'VIPAcc',
+}
