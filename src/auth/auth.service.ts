@@ -44,15 +44,15 @@ export class AuthService {
     }
 
     const roles = [];
-    if (await this.studentsRepository.findOneBy({ user: user })) {
+    if (await this.studentsRepository.existsBy({ user: { id: user.id } })) {
       roles.push(Role.STUDENT);
     }
 
-    if (await this.advisorsRepository.findOneBy({ user: user })) {
+    if (await this.advisorsRepository.existsBy({ user: { id: user.id } })) {
       roles.push(Role.ADVISOR);
     }
 
-    if (await this.adminsRepository.findOneBy({ user: user })) {
+    if (await this.adminsRepository.existsBy({ user: { id: user.id } })) {
       roles.push(Role.ADMIN);
     }
 

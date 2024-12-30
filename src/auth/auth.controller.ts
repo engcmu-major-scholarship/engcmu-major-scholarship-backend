@@ -18,7 +18,7 @@ export class AuthController {
 
   @Public()
   @Post('signin')
-  async googleSignin(@Body() body: SigninDTO) {
+  async signin(@Body() body: SigninDTO) {
     const token = await this.authService.requestToken(
       body.authorizationCode,
       body.redirectUri,
