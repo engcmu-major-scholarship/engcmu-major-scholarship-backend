@@ -22,6 +22,7 @@ import { ScholarshipModule } from './scholarship/scholarship.module';
         database: configService.get<string>('DB_NAME'),
         synchronize: true,
         autoLoadEntities: true,
+        timezone: 'Z',
       }),
     }),
     S3Module.forRootAsync({

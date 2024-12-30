@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -34,8 +35,14 @@ export class Application {
   applicationDocument: string;
 
   @Column({ nullable: true, default: null })
+  submissionTime: Date;
+
+  @Column({ nullable: true, default: null })
   adminApprovalTime: Date;
 
   @Column({ nullable: true, default: null })
   approvalComment: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
