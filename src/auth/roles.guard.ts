@@ -9,19 +9,19 @@ export class RolesGuard extends JwtAuthGuard {
     super(reflector);
   }
 
-  canActivate(context: ExecutionContext) {
-    const superCanActivate = super.canActivate(context);
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!requiredRoles) {
-      return superCanActivate;
+  async canActivate(context: ExecutionContext) {
+    if (await super.canActivate(context)) {
+      const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
+        ROLES_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+      if (!requiredRoles) {
+        return true;
+      }
+      const { user } = context.switchToHttp().getRequest();
+      return requiredRoles.some((role) => user.roles?.includes(role));
+    } else {
+      return false;
     }
-    const { user } = context.switchToHttp().getRequest();
-    return (
-      requiredRoles.some((role) => user.roles?.includes(role)) &&
-      superCanActivate
-    );
   }
 }
