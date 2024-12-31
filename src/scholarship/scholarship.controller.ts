@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { ScholarshipService } from './scholarship.service';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
@@ -13,7 +14,7 @@ import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 
 @Controller('scholarship')
 export class ScholarshipController {
-  constructor(private readonly scholarshipService: ScholarshipService) {}
+  constructor(private readonly scholarshipService: ScholarshipService) { }
 
   @Post()
   create(@Body() createScholarshipDto: CreateScholarshipDto) {

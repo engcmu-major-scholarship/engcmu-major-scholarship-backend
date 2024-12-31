@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { ScholarshipModule } from './scholarship/scholarship.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -40,8 +41,9 @@ import { ScholarshipModule } from './scholarship/scholarship.module';
     }),
     AuthModule,
     ScholarshipModule,
+    ApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

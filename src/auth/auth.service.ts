@@ -32,7 +32,7 @@ export class AuthService {
     private readonly advisorsRepository: Repository<Advisor>,
     @InjectRepository(Admin)
     private readonly adminsRepository: Repository<Admin>,
-  ) {}
+  ) { }
 
   async signin(token: string) {
     const cmuAccountInfo = await this.getCMUAccountInfo(token);
