@@ -1,51 +1,15 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Not, IsNull } from 'typeorm';
-import { CreateApplicationDto } from './dto/create-application.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Application } from 'src/models/application.entity';
-import { Scholarship } from 'src/models/scholarship.entity';
-import { Student } from 'src/models/student.entity';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepository: Repository<Application>,
-    @InjectRepository(Scholarship)
-    private readonly scholarshipRepository: Repository<Scholarship>,
-    @InjectRepository(Student)
-    private readonly studentRepository: Repository<Student>,
   ) { }
-
-  async create(createApplicationDto: CreateApplicationDto, user: Express.User) {
-    const scholarship = await this.scholarshipRepository.findOneBy({
-      id: createApplicationDto.scholar_id,
-    });
-
-    if (!scholarship) {
-      throw new InternalServerErrorException('Scholarship not found');
-    }
-
-    const student = await this.studentRepository.findOneBy({ user: { id: user['sub'] } });
-
-    try {
-      const newApplication = this.applicationRepository.create({
-        student,
-        year: createApplicationDto.year,
-        semester: createApplicationDto.semester,
-        scholarship,
-        requestAmount: createApplicationDto.budget || null,
-        submissionTime: new Date(),
-        applicationDocument: createApplicationDto.doc,
-        adminApprovalTime: null,
-        approvalComment: null,
-      });
-      return await this.applicationRepository.save(newApplication);
-    } catch (error) {
-      throw new InternalServerErrorException('Error in creating application');
-    }
-  }
 
   async findbyYear(year: number) {
     try {
