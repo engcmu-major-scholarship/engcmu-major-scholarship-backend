@@ -25,7 +25,7 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly jwtService: JwtService,
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Student)
     private readonly studentsRepository: Repository<Student>,
     @InjectRepository(Advisor)
@@ -36,7 +36,7 @@ export class AuthService {
 
   async signin(token: string) {
     const cmuAccountInfo = await this.getCMUAccountInfo(token);
-    const user = await this.usersRepository.findOneBy({
+    const user = await this.userRepository.findOneBy({
       CMUAccount: cmuAccountInfo.cmuitaccount,
     });
     if (!user) {
@@ -70,10 +70,10 @@ export class AuthService {
       throw new UnauthorizedException('Unauthorized organization');
     }
 
-    const newUser = this.usersRepository.create({
+    const newUser = this.userRepository.create({
       CMUAccount: cmuAccountInfo.cmuitaccount,
     });
-    await this.usersRepository.save(newUser);
+    await this.userRepository.save(newUser);
 
     const roles = [];
 

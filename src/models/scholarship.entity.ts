@@ -8,7 +8,7 @@ export class Scholarship {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
   @Column()

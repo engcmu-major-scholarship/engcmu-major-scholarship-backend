@@ -22,7 +22,7 @@ export class Application {
   year: number;
 
   @Column()
-  semester: string;
+  semester: number;
 
   @ManyToOne(() => Scholarship, { onDelete: 'RESTRICT' })
   @JoinColumn()

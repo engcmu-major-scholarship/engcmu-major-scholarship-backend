@@ -1,16 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request as ExpressRequest } from 'express';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { SigninDTO } from './dtos/signin.dto';
+import { SigninDTO } from './dto/signin.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { User } from 'src/decorators/user.decorator';
+import { TokenPayload } from './types/TokenPayload';
 
 @Controller('auth')
 export class AuthController {
@@ -28,7 +22,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('resolve-token')
-  async resolveToken(@Request() req: ExpressRequest) {
-    return req['user'];
+  async resolveToken(@User() user: TokenPayload) {
+    return user;
   }
 }
