@@ -1,28 +1,34 @@
-import { IsIn, IsNumber, IsOptional, IsPositive, ValidateIf } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateApplicationDto {
+  @ApiProperty()
   @IsNumber()
   @IsPositive()
-  readonly scholar_id: number;
+  scholarId: number;
 
+  @ApiProperty()
   @IsNumber()
   @IsPositive()
-  readonly year: number;
+  year: number;
 
-  @IsIn(['1', '2'], {
-    message: 'Semester must be one of the following: 1 or 2',
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @IsIn([1, 2, 3], {
+    message: 'Semester must be one of the following: 1 to 3',
   })
-  readonly semester: string;
+  semester: number;
 
+  @ApiProperty()
   @IsOptional()
   @IsNumber()
   @IsPositive()
   @Type(() => Number)
-  readonly budget?: number;
+  budget?: number;
 
-  // Not my bussiness
+  @ApiProperty()
   @IsOptional()
-  readonly doc: string;
-  // readonly doc?: Express.Multer.File;
+  doc: string;
 }
