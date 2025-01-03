@@ -11,4 +11,4 @@ import { Student } from 'src/models/student.entity';
   controllers: [ApplicationController],
   providers: [ApplicationService],
 })
-export class ApplicationModule { }
+export class ApplicationModule {}

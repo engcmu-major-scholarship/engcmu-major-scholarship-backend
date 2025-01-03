@@ -46,4 +46,4 @@ import { ApplicationModule } from './application/application.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

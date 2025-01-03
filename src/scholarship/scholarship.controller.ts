@@ -13,7 +13,7 @@ import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 
 @Controller('scholarship')
 export class ScholarshipController {
-  constructor(private readonly scholarshipService: ScholarshipService) { }
+  constructor(private readonly scholarshipService: ScholarshipService) {}
 
   @Post()
   create(@Body() createScholarshipDto: CreateScholarshipDto) {

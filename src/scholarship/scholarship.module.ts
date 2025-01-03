@@ -9,4 +9,4 @@ import { Scholarship } from 'src/models/scholarship.entity';
   controllers: [ScholarshipController],
   providers: [ScholarshipService],
 })
-export class ScholarshipModule { }
+export class ScholarshipModule {}
