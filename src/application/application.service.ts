@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Not, IsNull, LessThan, In } from 'typeorm';
+import { Not, IsNull, LessThan } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Application } from 'src/models/application.entity';
@@ -11,7 +11,7 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<Application>,
   ) {}
 
-  async findByYear(year: number, semester: number) {
+  async findByYearSemester(year: number, semester: number) {
     const applications = await this.applicationRepository.find({
       where: { year, semester },
       relations: {
@@ -25,49 +25,53 @@ export class ApplicationService {
       },
     });
 
-    const studentIds = applications.map((app) => app.student.id);
+    return Promise.all(
+      applications.map(async (app) => ({
+        appId: app.id,
+        studentId: app.student.id,
+        firstName: app.student.firstName,
+        lastName: app.student.lastName,
+        scholarName: app.scholarship.name,
+        requestAmount: app.requestAmount,
+        isFirstTime: !(await this.applicationRepository.existsBy([
+          {
+            student: app.student,
+            year: LessThan(year),
+          },
+          {
+            student: app.student,
+            year: year,
+            semester: LessThan(semester),
+          },
+        ])),
+      })),
+    );
+  }
 
-    const previousApplications = await this.applicationRepository.find({
+  async findRecipientByYearSemester(year: number, semester: number) {
+    const applications = await this.applicationRepository.find({
       where: {
-        student: { id: In(studentIds) },
-        year: LessThan(year),
+        year,
+        semester,
+        adminApprovalTime: Not(IsNull()),
       },
       relations: {
         student: true,
+        scholarship: true,
       },
-      select: { student: { id: true } },
+      select: {
+        id: true,
+        student: { id: true, firstName: true, lastName: true },
+        scholarship: { name: true },
+      },
     });
-
-    const previousStudentIds = new Set(
-      previousApplications.map((app) => app.student.id),
-    );
 
     return applications.map((app) => ({
       studentId: app.student.id,
       firstName: app.student.firstName,
       lastName: app.student.lastName,
       scholarName: app.scholarship.name,
-      isFirstTime: !previousStudentIds.has(app.student.id),
-    }));
-  }
-
-  async findApprovedStudentByScholar(scholarId: number) {
-    const applications = await this.applicationRepository.find({
-      where: {
-        scholarship: { id: scholarId },
-        adminApprovalTime: Not(IsNull()),
-      },
-      relations: { student: true },
-      select: {
-        id: true,
-        student: { id: true, firstName: true, lastName: true },
-      },
-    });
-
-    return applications.map((app) => ({
-      studentId: app.student.id,
-      firstName: app.student.firstName,
-      lastName: app.student.lastName,
+      requestAmount: app.requestAmount,
     }));
   }
 }

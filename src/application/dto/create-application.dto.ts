@@ -1,5 +1,4 @@
 import { IsIn, IsNumber, IsOptional, IsPositive } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateApplicationDto {
@@ -22,11 +21,9 @@ export class CreateApplicationDto {
   semester: number;
 
   @ApiProperty()
-  @IsOptional()
   @IsNumber()
   @IsPositive()
-  @Type(() => Number)
-  budget?: number;
+  budget: number | null;
 
   @ApiProperty()
   @IsOptional()

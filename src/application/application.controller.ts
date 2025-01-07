@@ -8,17 +8,20 @@ export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   @Roles(Role.ADMIN)
-  @Get(':year/:semester')
-  findbyYear(
+  @Get('consider/:year/:semester')
+  getConsiderByYearSemester(
     @Param('year', ParseIntPipe) year: number,
     @Param('semester', ParseIntPipe) semester: number,
   ) {
-    return this.applicationService.findByYear(year, semester);
+    return this.applicationService.findByYearSemester(year, semester);
   }
 
   @Roles(Role.ADMIN)
-  @Get('scholarship/:scholarId')
-  findApprovedStudent(@Param('scholarId', ParseIntPipe) scholarId: number) {
-    return this.applicationService.findApprovedStudentByScholar(scholarId);
+  @Get('recipient/:year/:semester')
+  getRecipientByYearSemester(
+    @Param('year', ParseIntPipe) year: number,
+    @Param('semester', ParseIntPipe) semester: number,
+  ) {
+    return this.applicationService.findRecipientByYearSemester(year, semester);
   }
 }
