@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,7 +11,7 @@ import {
 import { Application } from './application.entity';
 
 @Entity()
-export class Disbursement {
+export class Disbursement extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

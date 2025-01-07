@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -10,7 +11,7 @@ import { User } from './user.entity';
 import { Advisor } from './advisor.entity';
 
 @Entity()
-export class Student {
+export class Student extends BaseEntity {
   @PrimaryColumn()
   id: string;
 
