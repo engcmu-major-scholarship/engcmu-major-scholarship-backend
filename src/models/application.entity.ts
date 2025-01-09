@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Student } from './student.entity';
 import { Scholarship } from './scholarship.entity';
+import { Semester } from './semester';
 
 @Entity()
 export class Application extends BaseEntity {
@@ -19,11 +20,9 @@ export class Application extends BaseEntity {
   @JoinColumn()
   student: Student;
 
-  @Column()
-  year: number;
-
-  @Column()
-  semester: number;
+  @ManyToOne(() => Semester, { onDelete: 'RESTRICT' })
+  @JoinColumn()
+  semester: Semester;
 
   @ManyToOne(() => Scholarship, { onDelete: 'RESTRICT' })
   @JoinColumn()

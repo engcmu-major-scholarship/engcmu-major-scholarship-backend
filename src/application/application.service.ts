@@ -1,11 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/models/application.entity';
+import { Config } from 'src/models/config.entity';
 import { Repository, Not, IsNull, LessThan } from 'typeorm';
 
 @Injectable()
@@ -13,50 +9,51 @@ export class ApplicationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepository: Repository<Application>,
+    @InjectRepository(Config)
+    private readonly configRepository: Repository<Config>,
   ) {}
 
-  async findCurrentYear(userID: string) {
-    if (!userID) {
-      throw new BadRequestException('User ID must be provided');
-    }
+  async findCurrentYear(userId: string) {
+    const config = await this.configRepository.findOneByOrFail({
+      id: 1,
+    });
 
-    try {
-      const currentYear = new Date().getFullYear() + 543;
+    const applicationCurrentYear = this.applicationRepository.find({
+      where: {
+        semester: {
+          semester: config.applySemester,
+          year: {
+            year: config.applyYear,
+          },
+        },
+        student: {
+          user: {
+            id: userId,
+          },
+        },
+      },
+      relations: { scholarship: true, semester: { year: true } },
+      select: {
+        semester: {
+          semester: true,
+          year: { year: true },
+        },
+        adminApprovalTime: true,
+        scholarship: { name: true },
+      },
+    });
 
-      const applicationCurrentYear = await this.applicationRepository
-        .createQueryBuilder('application')
-        .select([
-          'scholarship.name',
-          'application.year',
-          'application.semester',
-          'application.adminApprovalTime',
-        ])
-        .innerJoin('application.scholarship', 'scholarship')
-        .innerJoin('application.student', 'student')
-        .where('student.userID = :userID', { userID })
-        .andWhere('application.year = :currentYear', {
-          currentYear: currentYear,
-        })
-        .getMany();
-
-      if (applicationCurrentYear.length === 0) {
-        throw new NotFoundException(
-          'No applications found for the current year',
-        );
-      }
-
-      return applicationCurrentYear;
-    } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(
-        'Error for finding by current year.',
-      );
-    }
+    return applicationCurrentYear;
   }
 
   async findByYearSemester(year: number, semester: number) {
     const applications = await this.applicationRepository.find({
-      where: { year, semester },
+      where: {
+        semester: {
+          semester,
+          year: { year },
+        },
+      },
       relations: {
         student: true,
         scholarship: true,
@@ -79,12 +76,20 @@ export class ApplicationService {
         isFirstTime: !(await this.applicationRepository.existsBy([
           {
             student: app.student,
-            year: LessThan(year),
+            semester: {
+              year: {
+                year: LessThan(year),
+              },
+            },
           },
           {
             student: app.student,
-            year: year,
-            semester: LessThan(semester),
+            semester: {
+              year: {
+                year,
+              },
+              semester: LessThan(semester),
+            },
           },
         ])),
       })),
@@ -94,8 +99,10 @@ export class ApplicationService {
   async findRecipientByYearSemester(year: number, semester: number) {
     const applications = await this.applicationRepository.find({
       where: {
-        year,
-        semester,
+        semester: {
+          semester,
+          year: { year },
+        },
         adminApprovalTime: Not(IsNull()),
       },
       relations: {

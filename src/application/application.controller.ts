@@ -1,8 +1,9 @@
-import { Controller, Get, Param, ParseIntPipe, Request } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
-import { Request as RequestExpress } from 'express';
+import { User } from 'src/decorators/user.decorator';
+import { TokenPayload } from 'src/auth/types/TokenPayload';
 
 @Controller('application')
 export class ApplicationController {
@@ -10,8 +11,8 @@ export class ApplicationController {
 
   @Roles(Role.STUDENT)
   @Get('current-year')
-  findCurrentYear(@Request() req: RequestExpress) {
-    return this.applicationService.findCurrentYear(req['user']['sub']);
+  findCurrentYear(@User() user: TokenPayload) {
+    return this.applicationService.findCurrentYear(user.sub);
   }
 
   @Roles(Role.ADMIN)
