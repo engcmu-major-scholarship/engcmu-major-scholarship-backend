@@ -29,19 +29,19 @@ export class Application extends BaseEntity {
   scholarship: Scholarship;
 
   @Column({ nullable: true, default: null })
-  requestAmount: number;
+  requestAmount: number | null;
 
   @Column()
   applicationDocument: string;
 
   @Column({ nullable: true, default: null })
-  submissionTime: Date;
+  submissionTime: Date | null;
 
   @Column({ nullable: true, default: null })
-  adminApprovalTime: Date;
+  adminApprovalTime: Date | null;
 
   @Column({ nullable: true, default: null })
-  approvalComment: string;
+  approvalComment: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
