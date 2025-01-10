@@ -16,6 +16,7 @@ export class S3Service {
   private readonly s3: S3Client;
 
   constructor(@Inject(S3_MODULE_OPTIONS_TOKEN) options: S3ClientConfig) {
+    console.log('S3 options:', options);
     this.s3 = new S3Client(options);
   }
 
