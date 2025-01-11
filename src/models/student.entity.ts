@@ -30,8 +30,8 @@ export class Student extends BaseEntity {
   advisor: Advisor;
 
   @Column({ nullable: true })
-  studentIdCard: string | null;
+  studentIdCard: string;
 
   @Column({ nullable: true })
-  bookBank: string | null;
+  bookBank: string;
 }

@@ -6,42 +6,20 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
-  UploadedFiles,
 } from '@nestjs/common';
 import { ScholarshipService } from './scholarship.service';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
-import { Public } from 'src/decorators/public.decorator';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
 
 @Controller('scholarship')
 export class ScholarshipController {
   constructor(private readonly scholarshipService: ScholarshipService) {}
 
   @Post()
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'scholarDoc', maxCount: 1 },
-      { name: 'appDoc', maxCount: 1 },
-    ]),
-  )
-  create(
-    @Body() createScholarshipDto: CreateScholarshipDto,
-    @UploadedFiles(
-      new ParseFileFieldsPipe<CreateScholarshipFilesDto>({
-        scholarDoc: { type: 'application/pdf' },
-        appDoc: { type: 'application/pdf' },
-      }),
-    )
-    files: CreateScholarshipFilesDto,
-  ) {
-    return this.scholarshipService.create(createScholarshipDto, files);
+  create(@Body() createScholarshipDto: CreateScholarshipDto) {
+    return this.scholarshipService.create(createScholarshipDto);
   }
 
-  @Public()
   @Get()
   findAll() {
     return this.scholarshipService.findAll();

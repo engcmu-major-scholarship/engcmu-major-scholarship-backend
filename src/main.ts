@@ -12,13 +12,7 @@ async function bootstrap() {
       'https://scholarship.se.cpe.eng.cmu.ac.th',
     ],
   });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const config = new DocumentBuilder()
     .setTitle('Faculty of Engineer CMU Major Scholarship API')

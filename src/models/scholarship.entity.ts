@@ -12,10 +12,10 @@ export class Scholarship extends BaseEntity {
   description: string;
 
   @Column()
-  requirement: string;
+  requirements: string;
 
   @Column({ nullable: true, default: null })
-  amount: number | null;
+  amount: number;
 
   @Column()
   detailDocument: string;

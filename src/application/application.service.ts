@@ -1,59 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { Not, IsNull, LessThan } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Application } from 'src/models/application.entity';
-import { Config } from 'src/models/config.entity';
-import { Repository, Not, IsNull, LessThan } from 'typeorm';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepository: Repository<Application>,
-    @InjectRepository(Config)
-    private readonly configRepository: Repository<Config>,
   ) {}
-
-  async findCurrentYear(userId: string) {
-    const config = await this.configRepository.findOneByOrFail({
-      id: 1,
-    });
-
-    const applicationCurrentYear = this.applicationRepository.find({
-      where: {
-        semester: {
-          semester: config.applySemester,
-          year: {
-            year: config.applyYear,
-          },
-        },
-        student: {
-          user: {
-            id: userId,
-          },
-        },
-      },
-      relations: { scholarship: true, semester: { year: true } },
-      select: {
-        semester: {
-          semester: true,
-          year: { year: true },
-        },
-        adminApprovalTime: true,
-        scholarship: { name: true },
-      },
-    });
-
-    return applicationCurrentYear;
-  }
 
   async findByYearSemester(year: number, semester: number) {
     const applications = await this.applicationRepository.find({
-      where: {
-        semester: {
-          semester,
-          year: { year },
-        },
-      },
+      where: { year, semester },
       relations: {
         student: true,
         scholarship: true,
@@ -76,20 +36,12 @@ export class ApplicationService {
         isFirstTime: !(await this.applicationRepository.existsBy([
           {
             student: app.student,
-            semester: {
-              year: {
-                year: LessThan(year),
-              },
-            },
+            year: LessThan(year),
           },
           {
             student: app.student,
-            semester: {
-              year: {
-                year,
-              },
-              semester: LessThan(semester),
-            },
+            year: year,
+            semester: LessThan(semester),
           },
         ])),
       })),
@@ -99,10 +51,8 @@ export class ApplicationService {
   async findRecipientByYearSemester(year: number, semester: number) {
     const applications = await this.applicationRepository.find({
       where: {
-        semester: {
-          semester,
-          year: { year },
-        },
+        year,
+        semester,
         adminApprovalTime: Not(IsNull()),
       },
       relations: {

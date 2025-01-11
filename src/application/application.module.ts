@@ -5,12 +5,9 @@ import { Application } from 'src/models/application.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { Student } from 'src/models/student.entity';
-import { Config } from 'src/models/config.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Application, Scholarship, Student, Config]),
-  ],
+  imports: [TypeOrmModule.forFeature([Application, Scholarship, Student])],
   controllers: [ApplicationController],
   providers: [ApplicationService],
 })
