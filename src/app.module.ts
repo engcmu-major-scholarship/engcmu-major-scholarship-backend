@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module';
 import { S3Module } from './s3/s3.module';
 import { ScholarshipModule } from './scholarship/scholarship.module';
 import { ApplicationModule } from './application/application.module';
-import { SettingModule } from './setting/setting.module';
 
 @Module({
   imports: [
@@ -43,7 +42,6 @@ import { SettingModule } from './setting/setting.module';
     AuthModule,
     ScholarshipModule,
     ApplicationModule,
-    SettingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

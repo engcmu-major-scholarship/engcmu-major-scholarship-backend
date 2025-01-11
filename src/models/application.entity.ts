@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { Student } from './student.entity';
 import { Scholarship } from './scholarship.entity';
-import { Semester } from './semester';
 
 @Entity()
 export class Application extends BaseEntity {
@@ -20,28 +19,30 @@ export class Application extends BaseEntity {
   @JoinColumn()
   student: Student;
 
-  @ManyToOne(() => Semester, { onDelete: 'RESTRICT' })
-  @JoinColumn()
-  semester: Semester;
+  @Column()
+  year: number;
+
+  @Column()
+  semester: number;
 
   @ManyToOne(() => Scholarship, { onDelete: 'RESTRICT' })
   @JoinColumn()
   scholarship: Scholarship;
 
   @Column({ nullable: true, default: null })
-  requestAmount: number | null;
+  requestAmount: number;
 
   @Column()
   applicationDocument: string;
 
   @Column({ nullable: true, default: null })
-  submissionTime: Date | null;
+  submissionTime: Date;
 
   @Column({ nullable: true, default: null })
-  adminApprovalTime: Date | null;
+  adminApprovalTime: Date;
 
   @Column({ nullable: true, default: null })
-  approvalComment: string | null;
+  approvalComment: string;
 
   @CreateDateColumn()
   createdAt: Date;
