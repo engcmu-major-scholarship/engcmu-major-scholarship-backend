@@ -18,7 +18,7 @@ export class ApplicationService {
       id: 1,
     });
 
-    const applicationCurrentYear = await this.applicationRepository.find({
+    const applicationCurrentYear = await this.applicationRepository.findOne({
       where: {
         semester: {
           semester: config.applySemester,
@@ -43,12 +43,12 @@ export class ApplicationService {
       },
     });
 
-    return applicationCurrentYear.map((app) => ({
-      scholarName: app.scholarship.name,
-      year: app.semester.year.year,
-      semester: app.semester.semester,
-      adminApproveTime: app.adminApprovalTime,
-    }));
+    return {
+      scholarName: applicationCurrentYear.scholarship.name,
+      year: applicationCurrentYear.semester.year.year,
+      semester: applicationCurrentYear.semester.semester,
+      adminApproveTime: applicationCurrentYear.adminApprovalTime,
+    };
   }
 
   async findByYearSemester(year: number, semester: number) {
