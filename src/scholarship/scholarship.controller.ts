@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFiles,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ScholarshipService } from './scholarship.service';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
@@ -52,20 +53,21 @@ export class ScholarshipController {
 
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scholarshipService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.scholarshipService.findOne(id);
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateScholarshipDto: UpdateScholarshipDto,
   ) {
-    return this.scholarshipService.update(+id, updateScholarshipDto);
+    return this.scholarshipService.update(id, updateScholarshipDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.scholarshipService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.scholarshipService.remove(id);
   }
 }

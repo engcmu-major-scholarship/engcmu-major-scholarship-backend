@@ -96,7 +96,15 @@ export class ScholarshipService {
   }
 
   update(id: number, updateScholarshipDto: UpdateScholarshipDto) {
-    return `This action updates a #${id} scholarship`;
+    const scholarship = this.scholarshipRepository.findOneBy({
+      id,
+    });
+
+    if (!scholarship) {
+      throw new NotFoundException('Scholarship not found');
+    }
+
+    this.scholarshipRepository.update(id, updateScholarshipDto);
   }
 
   remove(id: number) {
