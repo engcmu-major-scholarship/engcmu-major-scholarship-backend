@@ -6,7 +6,7 @@ import {
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
 import { Inject, Injectable } from '@nestjs/common';
-import { MODULE_OPTIONS_TOKEN } from './s3.module-definition';
+import { S3_MODULE_OPTIONS_TOKEN } from './s3.module-definition';
 import { MetadataBearer } from '@aws-sdk/types';
 import { Readable } from 'stream';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -15,7 +15,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 export class S3Service {
   private readonly s3: S3Client;
 
-  constructor(@Inject(MODULE_OPTIONS_TOKEN) private options: S3ClientConfig) {
+  constructor(@Inject(S3_MODULE_OPTIONS_TOKEN) options: S3ClientConfig) {
+    console.log('S3 options:', options);
     this.s3 = new S3Client(options);
   }
 

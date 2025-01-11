@@ -1,6 +1,6 @@
 import { CMUAccountType } from './CMUAccountType';
 
-export type CMUAccountInfo = {
+export class CMUAccountInfo {
   cmuitaccount_name: string;
   cmuitaccount: string;
   student_id: string;
@@ -17,4 +17,4 @@ export type CMUAccountInfo = {
   itaccounttype_id: CMUAccountType;
   itaccounttype_TH: string;
   itaccounttype_EN: string;
-};
+}

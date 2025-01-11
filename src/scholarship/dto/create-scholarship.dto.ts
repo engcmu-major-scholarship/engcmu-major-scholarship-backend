@@ -17,7 +17,7 @@ export class CreateScholarshipDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  defaultBudget?: number;
+  defaultBudget: number | null;
 
   @ApiProperty()
   @IsBoolean()
