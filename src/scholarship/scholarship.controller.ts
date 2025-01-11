@@ -16,11 +16,14 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/auth/types/Role';
 
 @Controller('scholarship')
 export class ScholarshipController {
   constructor(private readonly scholarshipService: ScholarshipService) {}
 
+  @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -47,6 +50,7 @@ export class ScholarshipController {
     return this.scholarshipService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.scholarshipService.findOne(+id);

@@ -5,7 +5,7 @@ import {
   S3Client,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { S3_MODULE_OPTIONS_TOKEN } from './s3.module-definition';
 import { MetadataBearer } from '@aws-sdk/types';
 import { Readable } from 'stream';
@@ -13,11 +13,14 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class S3Service {
-  private readonly s3: S3Client;
+  private static s3: S3Client;
 
-  constructor(@Inject(S3_MODULE_OPTIONS_TOKEN) options: S3ClientConfig) {
-    console.log('S3 options:', options);
-    this.s3 = new S3Client(options);
+  constructor(
+    @Optional()
+    @Inject(S3_MODULE_OPTIONS_TOKEN)
+    options: S3ClientConfig,
+  ) {
+    S3Service.s3 = new S3Client(options);
   }
 
   async uploadFile(
@@ -26,7 +29,7 @@ export class S3Service {
     body: Buffer | Readable,
     contentType: string,
   ): Promise<MetadataBearer> {
-    return await this.s3.send(
+    return await S3Service.s3.send(
       new PutObjectCommand({
         Bucket: bucket,
         Key: key,
@@ -42,14 +45,14 @@ export class S3Service {
     expiresIn = 3600,
   ): Promise<string> {
     return await getSignedUrl(
-      this.s3,
+      S3Service.s3,
       new GetObjectCommand({ Bucket: bucket, Key: key }),
       { expiresIn },
     );
   }
 
   async deleteFile(bucket: string, key: string): Promise<MetadataBearer> {
-    return await this.s3.send(
+    return await S3Service.s3.send(
       new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,

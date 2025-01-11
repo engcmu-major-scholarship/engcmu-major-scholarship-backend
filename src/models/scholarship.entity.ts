@@ -5,7 +5,7 @@ export class Scholarship extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column({ type: 'text' })
