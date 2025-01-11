@@ -11,7 +11,7 @@ export class ApplicationController {
 
   @Roles(Role.STUDENT)
   @Get('current-year')
-  findCurrentYear(@User() user: TokenPayload) {
+  getCurrentYear(@User() user: TokenPayload) {
     return this.applicationService.findCurrentYear(user.sub);
   }
 
