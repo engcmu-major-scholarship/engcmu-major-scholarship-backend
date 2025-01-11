@@ -28,6 +28,6 @@ export type FieldsOption<T> = {
   [K in keyof T]: ValidateOptions;
 };
 
-export type ValidateOptions = {
+export class ValidateOptions {
   maxCount: number;
-};
+}

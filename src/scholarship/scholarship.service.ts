@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +23,14 @@ export class ScholarshipService {
     createScholarshipDto: CreateScholarshipDto,
     files: CreateScholarshipFilesDto,
   ) {
+    if (
+      await this.scholarshipRepository.existsBy({
+        name: createScholarshipDto.name,
+      })
+    ) {
+      throw new UnprocessableEntityException('Scholarship already exists');
+    }
+
     const scholarDocKey = createScholarshipDto.name;
     this.s3Service.uploadFile(
       'major-scholar-scholar-doc',
@@ -50,36 +62,30 @@ export class ScholarshipService {
     const scholarships = await this.scholarshipRepository.findBy({
       published: true,
     });
-    return Promise.all(
-      scholarships.map(async (scholarship) => ({
-        name: scholarship.name,
-        description: scholarship.description,
-        requirement: scholarship.requirement,
-        defaultBudget: scholarship.amount,
-        docLink: await this.s3Service.getFileUrl(
-          'major-scholar-req-doc',
-          scholarship.detailDocument,
-        ),
-        appDocLink: await this.s3Service.getFileUrl(
-          'major-scholar-app-doc',
-          scholarship.applicationDocument,
-        ),
-        isPublic: scholarship.published,
-      })),
-    );
+    return scholarships.map((scholarship) => ({
+      id: scholarship.id,
+      name: scholarship.name,
+      description: scholarship.description,
+    }));
   }
 
   async findOne(id: number) {
     const scholarship = await this.scholarshipRepository.findOneBy({
       id,
+      published: true,
     });
+
+    if (!scholarship) {
+      throw new NotFoundException('Scholarship not found');
+    }
+
     return {
       name: scholarship.name,
       description: scholarship.description,
       requirement: scholarship.requirement,
       defaultBudget: scholarship.amount,
       docLink: await this.s3Service.getFileUrl(
-        'major-scholar-req-doc',
+        'major-scholar-scholar-doc',
         scholarship.detailDocument,
       ),
       appDocLink: await this.s3Service.getFileUrl(

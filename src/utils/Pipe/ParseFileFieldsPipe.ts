@@ -78,10 +78,10 @@ export type FieldsPattern<T = any> = {
   [K in keyof T]?: ValidateOptions;
 };
 
-export type ValidateOptions = {
+export class ValidateOptions {
   type?: string | RegExp;
   required?: boolean;
   minCount?: number;
   itemCount?: number;
   maxCount?: number;
-};
+}
