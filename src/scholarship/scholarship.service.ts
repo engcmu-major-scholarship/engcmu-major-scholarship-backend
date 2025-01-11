@@ -51,6 +51,8 @@ export class ScholarshipService {
       description: createScholarshipDto.description,
       requirement: createScholarshipDto.requirement,
       amount: createScholarshipDto.defaultBudget,
+      openDate: createScholarshipDto.openDate,
+      closeDate: createScholarshipDto.closeDate,
       detailDocument: scholarDocKey,
       applicationDocument: scholarDocKey,
       published: createScholarshipDto.published,
@@ -84,6 +86,8 @@ export class ScholarshipService {
       description: scholarship.description,
       requirement: scholarship.requirement,
       defaultBudget: scholarship.amount,
+      openDate: scholarship.openDate,
+      closeDate: scholarship.closeDate,
       docLink: await this.s3Service.getFileUrl(
         'major-scholar-scholar-doc',
         scholarship.detailDocument,
@@ -95,8 +99,8 @@ export class ScholarshipService {
     };
   }
 
-  update(id: number, updateScholarshipDto: UpdateScholarshipDto) {
-    const scholarship = this.scholarshipRepository.findOneBy({
+  async update(id: number, updateScholarshipDto: UpdateScholarshipDto) {
+    const scholarship = await this.scholarshipRepository.findOneBy({
       id,
     });
 
@@ -104,7 +108,7 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
-    this.scholarshipRepository.update(id, updateScholarshipDto);
+    await this.scholarshipRepository.update(id, updateScholarshipDto);
   }
 
   remove(id: number) {

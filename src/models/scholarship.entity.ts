@@ -18,6 +18,12 @@ export class Scholarship extends BaseEntity {
   amount: number | null;
 
   @Column()
+  openDate: Date;
+
+  @Column()
+  closeDate: Date;
+
+  @Column()
   detailDocument: string;
 
   @Column()
