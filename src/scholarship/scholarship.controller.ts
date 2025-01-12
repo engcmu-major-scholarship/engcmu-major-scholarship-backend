@@ -19,6 +19,7 @@ import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { FileFieldsInterceptorByType } from 'src/utils/Interceptor/FileFieldsInterceptorByType';
+import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
 
 @Controller('scholarship')
 export class ScholarshipController {
@@ -59,11 +60,24 @@ export class ScholarshipController {
 
   @Roles(Role.ADMIN)
   @Patch(':id')
+  @UseInterceptors(
+    FileFieldsInterceptorByType<UpdateScholarshipFilesDto>({
+      scholarDoc: { maxCount: 1 },
+      appDoc: { maxCount: 1 },
+    }),
+  )
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateScholarshipDto: UpdateScholarshipDto,
+    @UploadedFiles(
+      new ParseFileFieldsPipe<UpdateScholarshipFilesDto>({
+        scholarDoc: { type: 'application/pdf', itemCount: 1 },
+        appDoc: { type: 'application/pdf', itemCount: 1 },
+      }),
+    )
+    files: UpdateScholarshipFilesDto,
   ) {
-    return this.scholarshipService.update(id, updateScholarshipDto);
+    return this.scholarshipService.update(id, updateScholarshipDto, files);
   }
 
   @Delete(':id')

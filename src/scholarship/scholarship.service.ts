@@ -10,6 +10,7 @@ import { Scholarship } from 'src/models/scholarship.entity';
 import { Repository } from 'typeorm';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
+import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
 
 @Injectable()
 export class ScholarshipService {
@@ -99,13 +100,36 @@ export class ScholarshipService {
     };
   }
 
-  async update(id: number, updateScholarshipDto: UpdateScholarshipDto) {
+  async update(
+    id: number,
+    updateScholarshipDto: UpdateScholarshipDto,
+    files: UpdateScholarshipFilesDto,
+  ) {
     const scholarship = await this.scholarshipRepository.findOneBy({
       id,
     });
 
     if (!scholarship) {
       throw new NotFoundException('Scholarship not found');
+    }
+
+    if (files.scholarDoc) {
+      const scholarDocKey = scholarship.detailDocument;
+      this.s3Service.uploadFile(
+        'major-scholar-scholar-doc',
+        scholarDocKey,
+        files.scholarDoc[0].buffer,
+        files.scholarDoc[0].mimetype,
+      );
+    }
+    if (files.appDoc) {
+      const scholarAppDocKey = scholarship.applicationDocument;
+      this.s3Service.uploadFile(
+        'major-scholar-app-doc',
+        scholarAppDocKey,
+        files.appDoc[0].buffer,
+        files.appDoc[0].mimetype,
+      );
     }
 
     await this.scholarshipRepository.update(id, updateScholarshipDto);
