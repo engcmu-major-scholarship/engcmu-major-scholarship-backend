@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateScholarshipDto {
   @ApiProperty()
@@ -18,6 +24,14 @@ export class CreateScholarshipDto {
   @IsOptional()
   @IsNumber()
   defaultBudget: number | null;
+
+  @ApiProperty()
+  @IsDate()
+  openDate: Date;
+
+  @ApiProperty()
+  @IsDate()
+  closeDate: Date;
 
   @ApiProperty()
   @IsBoolean()
