@@ -8,6 +8,9 @@ export class ParseFileFieldsPipe<
   constructor(private readonly fieldsPattern: FieldsPattern<T>) {}
 
   transform(value: T): R {
+    if (!value) {
+      throw new BadRequestException('No files provided');
+    }
     const fields = Object.keys(this.fieldsPattern);
     for (const fieldName of fields) {
       const fieldKey = fieldName as keyof T;

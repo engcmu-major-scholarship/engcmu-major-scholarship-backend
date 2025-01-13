@@ -91,6 +91,7 @@ export class ApplicationService {
           semester,
           year: { year },
         },
+        submissionTime: Not(IsNull()),
       },
       relations: {
         student: true,

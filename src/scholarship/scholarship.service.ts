@@ -103,7 +103,7 @@ export class ScholarshipService {
         scholarship.detailDocument,
       ),
       appDocLink: await this.s3Service.getFileUrl(
-        'major-scholar-app-doc',
+        'major-scholar-app-doc-template',
         scholarship.applicationDocument,
       ),
     };
