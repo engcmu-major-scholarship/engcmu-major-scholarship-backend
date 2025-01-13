@@ -61,10 +61,19 @@ export class ScholarshipService {
     await this.scholarshipRepository.save(scholarship);
   }
 
-  async findAll() {
+  async findAllPublic() {
     const scholarships = await this.scholarshipRepository.findBy({
       published: true,
     });
+    return scholarships.map((scholarship) => ({
+      id: scholarship.id,
+      name: scholarship.name,
+      description: scholarship.description,
+    }));
+  }
+
+  async findAllAdmin() {
+    const scholarships = await this.scholarshipRepository.find();
     return scholarships.map((scholarship) => ({
       id: scholarship.id,
       name: scholarship.name,

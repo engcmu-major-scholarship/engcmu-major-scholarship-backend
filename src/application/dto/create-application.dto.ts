@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateApplicationDto {
@@ -8,7 +8,8 @@ export class CreateApplicationDto {
   scholarId: number;
 
   @ApiProperty()
+  @IsOptional()
   @IsNumber()
   @IsPositive()
-  budget: number | null;
+  budget?: number;
 }

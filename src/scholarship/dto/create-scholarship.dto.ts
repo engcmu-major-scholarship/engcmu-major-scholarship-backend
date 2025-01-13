@@ -4,6 +4,7 @@ import {
   IsDate,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
 } from 'class-validator';
 
@@ -23,7 +24,8 @@ export class CreateScholarshipDto {
   @ApiProperty()
   @IsOptional()
   @IsNumber()
-  defaultBudget: number | null;
+  @IsPositive()
+  defaultBudget?: number;
 
   @ApiProperty()
   @IsDate()

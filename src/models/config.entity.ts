@@ -1,13 +1,18 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Semester } from './semester';
 
 @Entity()
 export class Config extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  applyYear: number;
-
-  @Column()
-  applySemester: number;
+  @OneToOne(() => Semester)
+  @JoinColumn()
+  applySemester: Semester;
 }

@@ -6,6 +6,7 @@ import { Repository, Not, IsNull, LessThan } from 'typeorm';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateApplicationFileDto } from './dto/create-application-file.dto';
 import { S3Service } from 'src/s3/s3.service';
+import { Student } from 'src/models/student.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -15,6 +16,8 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<Application>,
     @InjectRepository(Config)
     private readonly configRepository: Repository<Config>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
   ) {}
 
   async create(
@@ -29,27 +32,31 @@ export class ApplicationService {
       file.doc[0].buffer,
       file.doc[0].mimetype,
     );
-    const config = await this.configRepository.findOneByOrFail({
-      id: 1,
+    const config = await this.configRepository.findOneOrFail({
+      where: {
+        id: 1,
+      },
+      relations: {
+        applySemester: true,
+      },
+    });
+
+    const student = await this.studentRepository.findOneByOrFail({
+      user: {
+        id: userId,
+      },
     });
 
     const application = this.applicationRepository.create({
-      student: {
-        user: {
-          id: userId,
-        },
-      },
-      semester: {
-        semester: config.applySemester,
-        year: { year: config.applyYear },
-      },
+      student: student,
+      semester: config.applySemester,
       scholarship: {
         id: createApplicationDto.scholarId,
       },
       requestAmount: createApplicationDto.budget,
       applicationDocument: appDockey,
     });
-    await this.applicationRepository.insert(application);
+    await this.applicationRepository.save(application);
   }
 
   async findCurrentYear(userId: string) {
@@ -57,14 +64,9 @@ export class ApplicationService {
       id: 1,
     });
 
-    const applicationCurrentYear = await this.applicationRepository.findOne({
+    const applicationCurrentYear = await this.applicationRepository.find({
       where: {
-        semester: {
-          semester: config.applySemester,
-          year: {
-            year: config.applyYear,
-          },
-        },
+        semester: config.applySemester,
         student: {
           user: {
             id: userId,
@@ -72,22 +74,14 @@ export class ApplicationService {
         },
       },
       relations: { scholarship: true, semester: { year: true } },
-      select: {
-        semester: {
-          semester: true,
-          year: { year: true },
-        },
-        adminApprovalTime: true,
-        scholarship: { name: true },
-      },
     });
 
-    return {
-      scholarName: applicationCurrentYear.scholarship.name,
-      year: applicationCurrentYear.semester.year.year,
-      semester: applicationCurrentYear.semester.semester,
-      adminApproveTime: applicationCurrentYear.adminApprovalTime,
-    };
+    return applicationCurrentYear.map((application) => ({
+      scholarName: application.scholarship.name,
+      year: application.semester.year.year,
+      semester: application.semester.semester,
+      adminApproveTime: application.adminApprovalTime,
+    }));
   }
 
   async findByYearSemester(year: number, semester: number) {
@@ -101,11 +95,6 @@ export class ApplicationService {
       relations: {
         student: true,
         scholarship: true,
-      },
-      select: {
-        id: true,
-        student: { id: true, firstName: true, lastName: true },
-        scholarship: { name: true },
       },
     });
 
@@ -153,14 +142,10 @@ export class ApplicationService {
         student: true,
         scholarship: true,
       },
-      select: {
-        id: true,
-        student: { id: true, firstName: true, lastName: true },
-        scholarship: { name: true },
-      },
     });
 
     return applications.map((app) => ({
+      appId: app.id,
       studentId: app.student.id,
       firstName: app.student.firstName,
       lastName: app.student.lastName,
