@@ -17,11 +17,31 @@ import { FileFieldsInterceptorByType } from 'src/utils/Interceptor/FileFieldsInt
 import { CreateApplicationFileDto } from './dto/create-application-file.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiBodyOptions,
+  ApiConsumes,
+} from '@nestjs/swagger';
+
+const apiBodyOptions: ApiBodyOptions = {
+  schema: {
+    type: 'object',
+    properties: {
+      scholarId: { type: 'number' },
+      budget: { type: 'number', nullable: true },
+      doc: { type: 'string', format: 'binary' },
+    },
+  },
+};
 
 @Controller('application')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
   @Roles(Role.STUDENT)
   @Post()
   @UseInterceptors(
@@ -42,12 +62,14 @@ export class ApplicationController {
     return this.applicationService.create(createApplicationDto, file, user.sub);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.STUDENT)
   @Get('current-year')
   getCurrentYear(@User() user: TokenPayload) {
     return this.applicationService.findCurrentYear(user.sub);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('consider/:year/:semester')
   getConsiderByYearSemester(
@@ -57,6 +79,7 @@ export class ApplicationController {
     return this.applicationService.findByYearSemester(year, semester);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('recipient/:year/:semester')
   getRecipientByYearSemester(
