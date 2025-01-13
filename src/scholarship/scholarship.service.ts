@@ -81,7 +81,7 @@ export class ScholarshipService {
     }));
   }
 
-  async findOne(id: number) {
+  async findOnePublic(id: number) {
     const scholarship = await this.scholarshipRepository.findOneBy({
       id,
       published: true,
@@ -91,6 +91,22 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
+    return await this.mapLinkScholarship(scholarship);
+  }
+
+  async findOneAdmin(id: number) {
+    const scholarship = await this.scholarshipRepository.findOneBy({
+      id,
+    });
+
+    if (!scholarship) {
+      throw new NotFoundException('Scholarship not found');
+    }
+
+    return await this.mapLinkScholarship(scholarship);
+  }
+
+  async mapLinkScholarship(scholarship: Scholarship) {
     return {
       name: scholarship.name,
       description: scholarship.description,
@@ -98,6 +114,7 @@ export class ScholarshipService {
       defaultBudget: scholarship.amount,
       openDate: scholarship.openDate,
       closeDate: scholarship.closeDate,
+      published: scholarship.published,
       docLink: await this.s3Service.getFileUrl(
         'major-scholar-scholar-doc',
         scholarship.detailDocument,

@@ -88,7 +88,14 @@ export class ScholarshipController {
   @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.scholarshipService.findOne(id);
+    return this.scholarshipService.findOnePublic(id);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('admin/:id')
+  findOneAdmin(@Param('id', ParseIntPipe) id: number) {
+    return this.scholarshipService.findOneAdmin(id);
   }
 
   @ApiBearerAuth()
