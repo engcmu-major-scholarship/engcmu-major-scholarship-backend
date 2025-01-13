@@ -1,9 +1,8 @@
 import { BadRequestException, PipeTransform } from '@nestjs/common';
+import { FileFields } from '../Types/FileFields';
 
-export class ParseFileFieldsPipe<
-  T extends Record<string, Array<Express.Multer.File>>,
-  R extends T = T,
-> implements PipeTransform<T, R>
+export class ParseFileFieldsPipe<T extends FileFields<T>, R extends T = T>
+  implements PipeTransform<T, R>
 {
   constructor(private readonly fieldsPattern: FieldsPattern<T>) {}
 
@@ -11,14 +10,12 @@ export class ParseFileFieldsPipe<
     if (!value) {
       throw new BadRequestException('No files provided');
     }
-    const fields = Object.keys(this.fieldsPattern);
-    for (const fieldName of fields) {
-      const fieldKey = fieldName as keyof T;
-      const validateOptions = this.fieldsPattern[fieldKey];
-      const fieldValue = value[fieldKey];
+    for (const key in this.fieldsPattern) {
+      const validateOptions = this.fieldsPattern[key];
+      const fieldValue = value[key];
 
       if (validateOptions.required && !fieldValue) {
-        throw new BadRequestException(`Field ${fieldName} is required`);
+        throw new BadRequestException(`Field ${key} is required`);
       }
 
       if (!fieldValue) {
@@ -30,7 +27,7 @@ export class ParseFileFieldsPipe<
         fieldValue.length < validateOptions.minCount
       ) {
         throw new BadRequestException(
-          `Field ${fieldName} should have at least ${validateOptions.minCount} files`,
+          `Field ${key} should have at least ${validateOptions.minCount} files`,
         );
       }
 
@@ -39,7 +36,7 @@ export class ParseFileFieldsPipe<
         fieldValue.length !== validateOptions.itemCount
       ) {
         throw new BadRequestException(
-          `Field ${fieldName} should have exactly ${validateOptions.itemCount} files`,
+          `Field ${key} should have exactly ${validateOptions.itemCount} files`,
         );
       }
 
@@ -48,7 +45,7 @@ export class ParseFileFieldsPipe<
         fieldValue.length > validateOptions.maxCount
       ) {
         throw new BadRequestException(
-          `Field ${fieldName} should have at most ${validateOptions.maxCount} files`,
+          `Field ${key} should have at most ${validateOptions.maxCount} files`,
         );
       }
 
@@ -57,7 +54,7 @@ export class ParseFileFieldsPipe<
           for (const file of fieldValue) {
             if (!validateOptions.type.test(file.mimetype)) {
               throw new BadRequestException(
-                `Field ${fieldName} must be of type ${validateOptions.type}`,
+                `Field ${key} must be of type ${validateOptions.type}`,
               );
             }
           }
@@ -65,7 +62,7 @@ export class ParseFileFieldsPipe<
           for (const file of fieldValue) {
             if (file.mimetype !== validateOptions.type) {
               throw new BadRequestException(
-                `Field ${fieldName} must be of type ${validateOptions.type}`,
+                `Field ${key} must be of type ${validateOptions.type}`,
               );
             }
           }

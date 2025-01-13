@@ -1,5 +1,3 @@
-import { FileFields } from 'src/utils/Types/FileFields';
-
-export class CreateApplicationFileDto extends FileFields {
+export class CreateApplicationFileDto {
   doc: Express.Multer.File[];
 }

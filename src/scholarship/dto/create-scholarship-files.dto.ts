@@ -1,6 +1,4 @@
-import { FileFields } from 'src/utils/Types/FileFields';
-
-export class CreateScholarshipFilesDto extends FileFields {
+export class CreateScholarshipFilesDto {
   scholarDoc: Express.Multer.File[];
   appDoc: Express.Multer.File[];
 }
