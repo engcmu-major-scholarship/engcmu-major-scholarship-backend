@@ -3,15 +3,54 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/models/application.entity';
 import { Config } from 'src/models/config.entity';
 import { Repository, Not, IsNull, LessThan } from 'typeorm';
+import { CreateApplicationDto } from './dto/create-application.dto';
+import { CreateApplicationFileDto } from './dto/create-application-file.dto';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class ApplicationService {
   constructor(
+    private readonly s3Service: S3Service,
     @InjectRepository(Application)
     private readonly applicationRepository: Repository<Application>,
     @InjectRepository(Config)
     private readonly configRepository: Repository<Config>,
   ) {}
+
+  async create(
+    createApplicationDto: CreateApplicationDto,
+    file: CreateApplicationFileDto,
+    userId: string,
+  ) {
+    const appDockey = userId;
+    this.s3Service.uploadFile(
+      'major-scholar-app-doc',
+      userId,
+      file.doc[0].buffer,
+      file.doc[0].mimetype,
+    );
+    const config = await this.configRepository.findOneByOrFail({
+      id: 1,
+    });
+
+    const application = this.applicationRepository.create({
+      student: {
+        user: {
+          id: userId,
+        },
+      },
+      semester: {
+        semester: config.applySemester,
+        year: { year: config.applyYear },
+      },
+      scholarship: {
+        id: createApplicationDto.scholarId,
+      },
+      requestAmount: createApplicationDto.budget,
+      applicationDocument: appDockey,
+    });
+    await this.applicationRepository.insert(application);
+  }
 
   async findCurrentYear(userId: string) {
     const config = await this.configRepository.findOneByOrFail({

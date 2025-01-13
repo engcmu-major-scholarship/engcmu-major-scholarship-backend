@@ -41,7 +41,7 @@ export class ScholarshipService {
     );
     const scholarAppDocKey = createScholarshipDto.name;
     this.s3Service.uploadFile(
-      'major-scholar-app-doc',
+      'major-scholar-app-doc-template',
       scholarAppDocKey,
       files.appDoc[0].buffer,
       files.appDoc[0].mimetype,
