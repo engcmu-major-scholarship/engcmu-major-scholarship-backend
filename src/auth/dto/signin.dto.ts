@@ -3,12 +3,12 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class SigninDTO {
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   authorizationCode: string;
 
   @ApiProperty()
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   redirectUri: string;
 }
