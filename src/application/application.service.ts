@@ -154,16 +154,24 @@ export class ApplicationService {
       requestAmount: app.requestAmount,
     }));
   }
-  async findApplicationHistoryBystudentID(StuID: string) {
-    const config = await this.configRepository.findOneByOrFail({
-      id: 1,
+
+  async findApplicationHistoryByStudentId(stuId: string) {
+    const config = await this.configRepository.findOneOrFail({
+      where: {
+        id: 1,
+      },
+      relations: {
+        applySemester: {
+          year: true,
+        },
+      },
     });
 
     const application = await this.applicationRepository.find({
       where: [
         {
           student: {
-            id: StuID,
+            id: stuId,
           },
           semester: {
             year: {
@@ -174,7 +182,7 @@ export class ApplicationService {
         },
         {
           student: {
-            id: StuID,
+            id: stuId,
           },
           semester: {
             year: {

@@ -92,7 +92,7 @@ export class ApplicationController {
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('history/:studentId')
-  getApplicationHistoryBystudentID(@Param('studentId') stuID: string) {
-    return this.applicationService.findApplicationHistoryBystudentID(stuID);
+  getApplicationHistoryByStudentID(@Param('studentId') stuId: string) {
+    return this.applicationService.findApplicationHistoryByStudentId(stuId);
   }
 }
