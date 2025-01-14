@@ -5,6 +5,7 @@ import { SigninDTO } from './dto/signin.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from './types/TokenPayload';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -20,6 +21,7 @@ export class AuthController {
     return this.authService.signin(token);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('resolve-token')
   async resolveToken(@User() user: TokenPayload) {

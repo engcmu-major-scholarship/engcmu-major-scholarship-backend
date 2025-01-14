@@ -20,11 +20,37 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { FileFieldsInterceptorByType } from 'src/utils/Interceptor/FileFieldsInterceptorByType';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiBodyOptions,
+  ApiConsumes,
+} from '@nestjs/swagger';
+
+const apiBodyOptions: ApiBodyOptions = {
+  schema: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      description: { type: 'string' },
+      requirement: { type: 'string' },
+      defaultBudget: { type: 'number', nullable: true },
+      openDate: { type: 'string', format: 'date-time' },
+      closeDate: { type: 'string', format: 'date-time' },
+      published: { type: 'boolean' },
+      scholarDoc: { type: 'string', format: 'binary' },
+      appDoc: { type: 'string', format: 'binary' },
+    },
+  },
+};
 
 @Controller('scholarship')
 export class ScholarshipController {
   constructor(private readonly scholarshipService: ScholarshipService) {}
 
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
   @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
@@ -49,15 +75,32 @@ export class ScholarshipController {
   @Public()
   @Get()
   findAll() {
-    return this.scholarshipService.findAll();
+    return this.scholarshipService.findAllPublic();
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('admin')
+  findAllAdmin() {
+    return this.scholarshipService.findAllAdmin();
   }
 
   @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.scholarshipService.findOne(id);
+    return this.scholarshipService.findOnePublic(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('admin/:id')
+  findOneAdmin(@Param('id', ParseIntPipe) id: number) {
+    return this.scholarshipService.findOneAdmin(id);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
   @Roles(Role.ADMIN)
   @Patch(':id')
   @UseInterceptors(

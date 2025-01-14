@@ -41,7 +41,7 @@ export class ScholarshipService {
     );
     const scholarAppDocKey = createScholarshipDto.name;
     this.s3Service.uploadFile(
-      'major-scholar-app-doc',
+      'major-scholar-app-doc-template',
       scholarAppDocKey,
       files.appDoc[0].buffer,
       files.appDoc[0].mimetype,
@@ -61,7 +61,7 @@ export class ScholarshipService {
     await this.scholarshipRepository.save(scholarship);
   }
 
-  async findAll() {
+  async findAllPublic() {
     const scholarships = await this.scholarshipRepository.findBy({
       published: true,
     });
@@ -72,7 +72,16 @@ export class ScholarshipService {
     }));
   }
 
-  async findOne(id: number) {
+  async findAllAdmin() {
+    const scholarships = await this.scholarshipRepository.find();
+    return scholarships.map((scholarship) => ({
+      id: scholarship.id,
+      name: scholarship.name,
+      description: scholarship.description,
+    }));
+  }
+
+  async findOnePublic(id: number) {
     const scholarship = await this.scholarshipRepository.findOneBy({
       id,
       published: true,
@@ -82,6 +91,22 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
+    return await this.mapLinkScholarship(scholarship);
+  }
+
+  async findOneAdmin(id: number) {
+    const scholarship = await this.scholarshipRepository.findOneBy({
+      id,
+    });
+
+    if (!scholarship) {
+      throw new NotFoundException('Scholarship not found');
+    }
+
+    return await this.mapLinkScholarship(scholarship);
+  }
+
+  async mapLinkScholarship(scholarship: Scholarship) {
     return {
       name: scholarship.name,
       description: scholarship.description,
@@ -89,12 +114,13 @@ export class ScholarshipService {
       defaultBudget: scholarship.amount,
       openDate: scholarship.openDate,
       closeDate: scholarship.closeDate,
+      published: scholarship.published,
       docLink: await this.s3Service.getFileUrl(
         'major-scholar-scholar-doc',
         scholarship.detailDocument,
       ),
       appDocLink: await this.s3Service.getFileUrl(
-        'major-scholar-app-doc',
+        'major-scholar-app-doc-template',
         scholarship.applicationDocument,
       ),
     };
