@@ -88,4 +88,11 @@ export class ApplicationController {
   ) {
     return this.applicationService.findRecipientByYearSemester(year, semester);
   }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('history/:studentId')
+  getApplicationHistoryBystudentID(@Param('studentId') stuID: string) {
+    return this.applicationService.findApplicationHistoryBystudentID(stuID);
+  }
 }

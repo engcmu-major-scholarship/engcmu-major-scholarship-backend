@@ -154,4 +154,44 @@ export class ApplicationService {
       requestAmount: app.requestAmount,
     }));
   }
+  async findApplicationHistoryBystudentID(StuID: string) {
+    const config = await this.configRepository.findOneByOrFail({
+      id: 1,
+    });
+
+    const application = await this.applicationRepository.find({
+      where: [
+        {
+          student: {
+            id: StuID,
+          },
+          semester: {
+            year: {
+              year: LessThan(config.applySemester.year.year),
+            },
+          },
+          adminApprovalTime: Not(IsNull()),
+        },
+        {
+          student: {
+            id: StuID,
+          },
+          semester: {
+            year: {
+              year: config.applySemester.year.year,
+            },
+            semester: LessThan(config.applySemester.semester),
+          },
+          adminApprovalTime: Not(IsNull()),
+        },
+      ],
+    });
+
+    return application.map((app) => ({
+      scholarName: app.scholarship.name,
+      budget: app.scholarship.amount,
+      year: app.semester.year.year,
+      semester: app.semester.semester,
+    }));
+  }
 }
