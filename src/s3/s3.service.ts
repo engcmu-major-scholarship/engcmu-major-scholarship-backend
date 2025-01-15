@@ -13,13 +13,13 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class S3Service {
-  private readonly s3: S3Client;
+  private static s3: S3Client;
 
   constructor(
     @Inject(S3_MODULE_OPTIONS_TOKEN)
     options: S3ClientConfig,
   ) {
-    this.s3 = new S3Client(options);
+    S3Service.s3 = new S3Client(options);
   }
 
   async uploadFile(
@@ -28,7 +28,7 @@ export class S3Service {
     body: Buffer | Readable,
     contentType: string,
   ): Promise<MetadataBearer> {
-    return await this.s3.send(
+    return await S3Service.s3.send(
       new PutObjectCommand({
         Bucket: bucket,
         Key: key,
@@ -44,14 +44,14 @@ export class S3Service {
     expiresIn = 3600,
   ): Promise<string> {
     return await getSignedUrl(
-      this.s3,
+      S3Service.s3,
       new GetObjectCommand({ Bucket: bucket, Key: key }),
       { expiresIn },
     );
   }
 
   async deleteFile(bucket: string, key: string): Promise<MetadataBearer> {
-    return await this.s3.send(
+    return await S3Service.s3.send(
       new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,
