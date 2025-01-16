@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
+import { isNotEmptyObject } from 'class-validator';
 
 @Injectable()
 export class ScholarshipService {
@@ -158,7 +159,19 @@ export class ScholarshipService {
       );
     }
 
-    await this.scholarshipRepository.update(id, updateScholarshipDto);
+    if (isNotEmptyObject(updateScholarshipDto)) {
+      await this.scholarshipRepository.update(id, {
+        name: updateScholarshipDto.name,
+        description: updateScholarshipDto.description,
+        requirement: updateScholarshipDto.requirement,
+        amount: updateScholarshipDto.defaultBudget,
+        openDate: updateScholarshipDto.openDate,
+        closeDate: updateScholarshipDto.closeDate,
+        published: updateScholarshipDto.published,
+      });
+    } else {
+      throw new UnprocessableEntityException('No data to update');
+    }
   }
 
   remove(id: number) {

@@ -13,10 +13,10 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/types/TokenPayload';
-import { FileFieldsInterceptorByType } from 'src/utils/Interceptor/FileFieldsInterceptorByType';
+import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
 import { CreateApplicationFileDto } from './dto/create-application-file.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
+import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -45,7 +45,7 @@ export class ApplicationController {
   @Roles(Role.STUDENT)
   @Post()
   @UseInterceptors(
-    FileFieldsInterceptorByType<CreateApplicationFileDto>({
+    FileFieldsByTypeInterceptor<CreateApplicationFileDto>({
       doc: { maxCount: 1 },
     }),
   )

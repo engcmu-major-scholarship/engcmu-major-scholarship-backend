@@ -2,16 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
-  isBooleanString,
   IsDate,
-  isDateString,
   IsNotEmpty,
   IsNumber,
-  isNumberString,
-  IsOptional,
   IsPositive,
   IsString,
 } from 'class-validator';
+import { FormDataTransformer } from 'src/utils/Tranformer/FormData.Tranformer';
 
 export class CreateScholarshipDto {
   @ApiProperty()
@@ -32,45 +29,21 @@ export class CreateScholarshipDto {
   @ApiProperty()
   @IsPositive()
   @IsNumber()
-  @IsOptional()
-  @Transform(({ value }) => {
-    if (value === 'null') {
-      return null;
-    }
-    if (isNumberString(value)) {
-      return parseInt(value, 10);
-    }
-    return value;
-  })
-  defaultBudget?: number;
+  @Transform(FormDataTransformer)
+  defaultBudget: number | null;
 
   @ApiProperty()
   @IsDate()
-  @Transform(({ value }) => {
-    if (isDateString(value)) {
-      return new Date(value);
-    }
-    return value;
-  })
+  @Transform(FormDataTransformer)
   openDate: Date;
 
   @ApiProperty()
   @IsDate()
-  @Transform(({ value }) => {
-    if (isDateString(value)) {
-      return new Date(value);
-    }
-    return value;
-  })
+  @Transform(FormDataTransformer)
   closeDate: Date;
 
   @ApiProperty()
   @IsBoolean()
-  @Transform(({ value }) => {
-    if (isBooleanString(value)) {
-      return value === 'true';
-    }
-    return value;
-  })
+  @Transform(FormDataTransformer)
   published: boolean;
 }
