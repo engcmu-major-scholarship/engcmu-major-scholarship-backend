@@ -9,14 +9,13 @@ import { S3Service } from './s3.service';
 import { S3_SERVICE_TOKEN } from './s3.constants';
 
 @Module({
-  imports: [S3CoreModule],
   providers: [
     {
       provide: S3Service,
       useExisting: S3_SERVICE_TOKEN,
     },
   ],
-  exports: [S3CoreModule, S3Service],
+  exports: [S3Service],
 })
 export class S3Module {
   static forRoot(options: typeof S3_OPTIONS_TYPE): DynamicModule {
@@ -29,7 +28,6 @@ export class S3Module {
           useValue: options,
         },
       ],
-      exports: [S3CoreModule],
     };
   }
 
@@ -45,7 +43,6 @@ export class S3Module {
           inject: options.inject,
         },
       ],
-      exports: [S3CoreModule],
     };
   }
 }

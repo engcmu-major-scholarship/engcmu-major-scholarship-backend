@@ -7,10 +7,6 @@ import { S3_MODULE_OPTIONS_TOKEN } from './s3.module-definition';
 @Module({
   providers: [
     {
-      provide: S3_MODULE_OPTIONS_TOKEN,
-      useFactory: () => ({}),
-    },
-    {
       provide: S3_SERVICE_TOKEN,
       useClass: S3Service,
     },
