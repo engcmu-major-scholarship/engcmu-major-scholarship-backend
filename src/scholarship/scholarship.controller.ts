@@ -15,10 +15,10 @@ import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { Public } from 'src/decorators/public.decorator';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFieldsPipe';
+import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
-import { FileFieldsInterceptorByType } from 'src/utils/Interceptor/FileFieldsInterceptorByType';
+import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
 import {
   ApiBearerAuth,
@@ -54,7 +54,7 @@ export class ScholarshipController {
   @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
-    FileFieldsInterceptorByType<CreateScholarshipFilesDto>({
+    FileFieldsByTypeInterceptor<CreateScholarshipFilesDto>({
       scholarDoc: { maxCount: 1 },
       appDoc: { maxCount: 1 },
     }),
@@ -104,7 +104,7 @@ export class ScholarshipController {
   @Roles(Role.ADMIN)
   @Patch(':id')
   @UseInterceptors(
-    FileFieldsInterceptorByType<UpdateScholarshipFilesDto>({
+    FileFieldsByTypeInterceptor<UpdateScholarshipFilesDto>({
       scholarDoc: { maxCount: 1 },
       appDoc: { maxCount: 1 },
     }),

@@ -1,22 +1,48 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { S3CoreModule } from './s3.core-module';
-import { S3_ASYNC_OPTIONS_TYPE, S3_OPTIONS_TYPE } from './s3.module-definition';
+import {
+  S3_ASYNC_OPTIONS_TYPE,
+  S3_MODULE_OPTIONS_TOKEN,
+  S3_OPTIONS_TYPE,
+} from './s3.module-definition';
+import { S3Service } from './s3.service';
+import { S3_SERVICE_TOKEN } from './s3.constants';
 
-@Module({})
+@Module({
+  providers: [
+    {
+      provide: S3Service,
+      useExisting: S3_SERVICE_TOKEN,
+    },
+  ],
+  exports: [S3Service],
+})
 export class S3Module {
   static forRoot(options: typeof S3_OPTIONS_TYPE): DynamicModule {
     return {
-      imports: [S3CoreModule.forRoot(options)],
-      module: S3Module,
-      exports: [S3CoreModule],
+      module: S3CoreModule,
+      global: options.isGlobal,
+      providers: [
+        {
+          provide: S3_MODULE_OPTIONS_TOKEN,
+          useValue: options,
+        },
+      ],
     };
   }
 
   static forRootAsync(options: typeof S3_ASYNC_OPTIONS_TYPE): DynamicModule {
     return {
-      imports: [S3CoreModule.forRootAsync(options)],
-      module: S3Module,
-      exports: [S3CoreModule],
+      imports: options.imports,
+      module: S3CoreModule,
+      global: options.isGlobal,
+      providers: [
+        {
+          provide: S3_MODULE_OPTIONS_TOKEN,
+          useFactory: options.useFactory,
+          inject: options.inject,
+        },
+      ],
     };
   }
 }
