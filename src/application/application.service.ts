@@ -77,9 +77,11 @@ export class ApplicationService {
     });
 
     return applicationCurrentYear.map((application) => ({
+      appId: application.id,
       scholarName: application.scholarship.name,
       year: application.semester.year.year,
       semester: application.semester.semester,
+      submissionTime: application.submissionTime,
       adminApproveTime: application.adminApprovalTime,
     }));
   }
