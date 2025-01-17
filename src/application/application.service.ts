@@ -197,7 +197,7 @@ export class ApplicationService {
       ],
       relations: {
         scholarship: true,
-        semester: true,
+        semester: { year: true },
       },
     });
 
@@ -206,6 +206,7 @@ export class ApplicationService {
       budget: app.requestAmount,
       year: app.semester.year.year,
       semester: app.semester.semester,
+      submissionTime: app.submissionTime,
       adminApprovalTime: app.adminApprovalTime,
     }));
   }
