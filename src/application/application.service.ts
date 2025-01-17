@@ -25,7 +25,7 @@ export class ApplicationService {
     file: CreateApplicationFileDto,
     userId: string,
   ) {
-    const appDockey = userId;
+    const appDockey = userId + '_' + Date.now();
     this.s3Service.uploadFile(
       'major-scholar-app-doc',
       userId,
@@ -77,9 +77,11 @@ export class ApplicationService {
     });
 
     return applicationCurrentYear.map((application) => ({
+      appId: application.id,
       scholarName: application.scholarship.name,
       year: application.semester.year.year,
       semester: application.semester.semester,
+      submissionTime: application.submissionTime,
       adminApproveTime: application.adminApprovalTime,
     }));
   }
@@ -155,6 +157,60 @@ export class ApplicationService {
     }));
   }
 
+  async findApplicationHistory(userId: string) {
+    const config = await this.configRepository.findOneOrFail({
+      where: {
+        id: 1,
+      },
+      relations: {
+        applySemester: {
+          year: true,
+        },
+      },
+    });
+
+    const applications = await this.applicationRepository.find({
+      where: [
+        {
+          student: {
+            user: {
+              id: userId,
+            },
+          },
+          semester: {
+            year: {
+              year: LessThan(config.applySemester.year.year),
+            },
+          },
+        },
+        {
+          student: {
+            user: {
+              id: userId,
+            },
+          },
+          semester: {
+            year: config.applySemester.year,
+            semester: LessThan(config.applySemester.semester),
+          },
+        },
+      ],
+      relations: {
+        scholarship: true,
+        semester: { year: true },
+      },
+    });
+
+    return applications.map((app) => ({
+      scholarName: app.scholarship.name,
+      budget: app.requestAmount,
+      year: app.semester.year.year,
+      semester: app.semester.semester,
+      submissionTime: app.submissionTime,
+      adminApprovalTime: app.adminApprovalTime,
+    }));
+  }
+
   async findApplicationHistoryByStudentId(stuId: string) {
     const config = await this.configRepository.findOneOrFail({
       where: {
@@ -185,9 +241,7 @@ export class ApplicationService {
             id: stuId,
           },
           semester: {
-            year: {
-              year: config.applySemester.year.year,
-            },
+            year: config.applySemester.year,
             semester: LessThan(config.applySemester.semester),
           },
           adminApprovalTime: Not(IsNull()),

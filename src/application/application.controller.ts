@@ -90,6 +90,13 @@ export class ApplicationController {
   }
 
   @ApiBearerAuth()
+  @Roles(Role.STUDENT)
+  @Get('history')
+  getApplicationHistory(@User() user: TokenPayload) {
+    return this.applicationService.findApplicationHistory(user.sub);
+  }
+
+  @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('history/:studentId')
   getApplicationHistoryByStudentID(@Param('studentId') stuId: string) {
