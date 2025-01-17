@@ -155,6 +155,30 @@ export class ApplicationService {
     }));
   }
 
+  async findApplicationHistory(userId: string) {
+    const applications = await this.applicationRepository.find({
+      where: {
+        student: {
+          user: {
+            id: userId,
+          },
+        },
+      },
+      relations: {
+        scholarship: true,
+        semester: true,
+      },
+    });
+
+    return applications.map((app) => ({
+      scholarName: app.scholarship.name,
+      budget: app.requestAmount,
+      year: app.semester.year.year,
+      semester: app.semester.semester,
+      adminApprovalTime: app.adminApprovalTime,
+    }));
+  }
+
   async findApplicationHistoryByStudentId(stuId: string) {
     const config = await this.configRepository.findOneOrFail({
       where: {
