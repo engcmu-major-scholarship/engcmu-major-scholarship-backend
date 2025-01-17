@@ -25,7 +25,7 @@ export class ApplicationService {
     file: CreateApplicationFileDto,
     userId: string,
   ) {
-    const appDockey = userId;
+    const appDockey = userId + '_' + Date.now();
     this.s3Service.uploadFile(
       'major-scholar-app-doc',
       userId,
@@ -158,14 +158,43 @@ export class ApplicationService {
   }
 
   async findApplicationHistory(userId: string) {
-    const applications = await this.applicationRepository.find({
+    const config = await this.configRepository.findOneOrFail({
       where: {
-        student: {
-          user: {
-            id: userId,
-          },
+        id: 1,
+      },
+      relations: {
+        applySemester: {
+          year: true,
         },
       },
+    });
+
+    const applications = await this.applicationRepository.find({
+      where: [
+        {
+          student: {
+            user: {
+              id: userId,
+            },
+          },
+          semester: {
+            year: {
+              year: LessThan(config.applySemester.year.year),
+            },
+          },
+        },
+        {
+          student: {
+            user: {
+              id: userId,
+            },
+          },
+          semester: {
+            year: config.applySemester.year,
+            semester: LessThan(config.applySemester.semester),
+          },
+        },
+      ],
       relations: {
         scholarship: true,
         semester: true,
@@ -211,9 +240,7 @@ export class ApplicationService {
             id: stuId,
           },
           semester: {
-            year: {
-              year: config.applySemester.year.year,
-            },
+            year: config.applySemester.year,
             semester: LessThan(config.applySemester.semester),
           },
           adminApprovalTime: Not(IsNull()),
