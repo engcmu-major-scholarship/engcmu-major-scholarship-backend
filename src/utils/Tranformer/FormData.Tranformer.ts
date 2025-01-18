@@ -3,7 +3,7 @@ import { isDateString } from 'class-validator';
 
 export const FormDataTransformer = (params: TransformFnParams) => {
   const { value } = params;
-  if (!value) return undefined;
+  if (!value) return value;
   try {
     return JSON.parse(value);
   } catch {
