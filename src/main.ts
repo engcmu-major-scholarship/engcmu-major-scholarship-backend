@@ -10,6 +10,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://scholarship.se.cpe.eng.cmu.ac.th',
+      'https://staging.yamami.tech',
     ],
   });
   app.useGlobalPipes(
