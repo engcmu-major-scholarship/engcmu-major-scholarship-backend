@@ -5,6 +5,7 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
 } from 'class-validator';
@@ -29,6 +30,7 @@ export class CreateScholarshipDto {
   @ApiProperty()
   @IsPositive()
   @IsNumber()
+  @IsOptional()
   @Transform(FormDataTransformer)
   defaultBudget: number | null;
 

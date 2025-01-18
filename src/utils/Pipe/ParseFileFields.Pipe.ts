@@ -8,7 +8,7 @@ export class ParseFileFieldsPipe<T extends FileFields<T>, R extends T = T>
 
   transform(value: T): R {
     if (!value) {
-      throw new BadRequestException('No files provided');
+      return {} as R;
     }
     for (const key in this.fieldsPattern) {
       const validateOptions = this.fieldsPattern[key];

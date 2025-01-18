@@ -31,6 +31,9 @@ export class Application extends BaseEntity {
   @Column({ nullable: true, default: null })
   requestAmount: number | null;
 
+  @Column({ nullable: true, default: null })
+  grantedAmount: number | null;
+
   @Column()
   applicationDocument: string;
 
