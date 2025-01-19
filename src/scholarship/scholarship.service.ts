@@ -7,7 +7,7 @@ import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Scholarship } from 'src/models/scholarship.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
@@ -70,6 +70,20 @@ export class ScholarshipService {
       id: scholarship.id,
       name: scholarship.name,
       description: scholarship.description,
+    }));
+  }
+
+  async findApplyable() {
+    const now = new Date();
+    const scholarships = await this.scholarshipRepository.findBy({
+      published: true,
+      openDate: LessThanOrEqual(now),
+      closeDate: MoreThanOrEqual(now),
+    });
+    return scholarships.map((scholarship) => ({
+      id: scholarship.id,
+      name: scholarship.name,
+      defaultBudget: scholarship.amount,
     }));
   }
 

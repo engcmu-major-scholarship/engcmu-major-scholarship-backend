@@ -18,11 +18,27 @@ export class SettingService {
     private readonly yearRepository: Repository<Year>,
   ) {}
 
+  async findCurrentYearSemester() {
+    const config = await this.configRepository.findOneOrFail({
+      where: {
+        id: 1,
+      },
+      relations: {
+        applySemester: { year: true },
+      },
+    });
+
+    return {
+      year: config.applySemester.year.year,
+      semester: config.applySemester.semester,
+    };
+  }
+
   create(createSettingDto: CreateSettingDto) {
     return 'This action adds a new setting';
   }
 
-  findAll() {
+  find() {
     return `This action returns all setting`;
   }
 
