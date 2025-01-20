@@ -7,17 +7,10 @@ import { Scholarship } from 'src/models/scholarship.entity';
 import { Student } from 'src/models/student.entity';
 import { Config } from 'src/models/config.entity';
 import { S3Module } from 'src/s3/s3.module';
-import { Admin } from 'src/models/admin.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Application,
-      Scholarship,
-      Student,
-      Admin,
-      Config,
-    ]),
+    TypeOrmModule.forFeature([Application, Scholarship, Student, Config]),
     S3Module,
   ],
   controllers: [ApplicationController],

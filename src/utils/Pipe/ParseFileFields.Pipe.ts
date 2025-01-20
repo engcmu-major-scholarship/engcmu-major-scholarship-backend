@@ -7,9 +7,7 @@ export class ParseFileFieldsPipe<T extends FileFields<T>, R extends T = T>
   constructor(private readonly fieldsPattern: FieldsPattern<T>) {}
 
   transform(value: T): R {
-    if (!value) {
-      return {} as R;
-    }
+    if (!value) value = {} as T;
     for (const key in this.fieldsPattern) {
       const validateOptions = this.fieldsPattern[key];
       const fieldValue = value[key];

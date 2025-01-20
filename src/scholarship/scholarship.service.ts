@@ -75,6 +75,7 @@ export class ScholarshipService {
 
   async findApplyable() {
     const now = new Date();
+    now.setHours(7, 0, 0, 0);
     const scholarships = await this.scholarshipRepository.findBy({
       published: true,
       openDate: LessThanOrEqual(now),
@@ -166,7 +167,7 @@ export class ScholarshipService {
     if (files.appDoc) {
       const scholarAppDocKey = scholarship.applicationDocument;
       this.s3Service.uploadFile(
-        'major-scholar-app-doc',
+        'major-scholar-app-doc-template',
         scholarAppDocKey,
         files.appDoc[0].buffer,
         files.appDoc[0].mimetype,
@@ -184,7 +185,7 @@ export class ScholarshipService {
         published: updateScholarshipDto.published,
       });
     } else {
-      throw new UnprocessableEntityException('No data to update');
+      if (!files) throw new UnprocessableEntityException('No data to update');
     }
   }
 
