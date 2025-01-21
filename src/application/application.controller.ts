@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -23,6 +24,8 @@ import {
   ApiBodyOptions,
   ApiConsumes,
 } from '@nestjs/swagger';
+import { UpdateApplicationDto } from './dto/update-application.dto';
+import { UpdateApplicationFilesDto } from './dto/update-application-file.dto';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {
@@ -60,6 +63,42 @@ export class ApplicationController {
     @User() user: TokenPayload,
   ) {
     return this.applicationService.create(createApplicationDto, file, user.sub);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
+  @Roles(Role.STUDENT)
+  @Patch(':id')
+  @UseInterceptors(
+    FileFieldsByTypeInterceptor<CreateApplicationFilesDto>({
+      doc: { maxCount: 1 },
+    }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createApplicationDto: UpdateApplicationDto,
+    @UploadedFiles(
+      new ParseFileFieldsPipe<UpdateApplicationFilesDto>({
+        doc: { type: 'application/pdf', itemCount: 1 },
+      }),
+    )
+    file: UpdateApplicationFilesDto,
+    @User() user: TokenPayload,
+  ) {
+    return this.applicationService.update(
+      id,
+      createApplicationDto,
+      file,
+      user.sub,
+    );
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.STUDENT)
+  @Patch('submit/:id')
+  submit(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
+    return this.applicationService.submit(id, user.sub);
   }
 
   @ApiBearerAuth()

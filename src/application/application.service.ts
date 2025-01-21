@@ -2,19 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/models/application.entity';
 import { Config } from 'src/models/config.entity';
-import {
-  Repository,
-  Not,
-  IsNull,
-  LessThan,
-  LessThanOrEqual,
-  MoreThanOrEqual,
-} from 'typeorm';
+import { Repository, Not, IsNull, LessThan } from 'typeorm';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateApplicationFilesDto } from './dto/create-application-files.dto';
 import { S3Service } from 'src/s3/s3.service';
 import { Student } from 'src/models/student.entity';
 import { Role } from 'src/auth/types/Role';
+import { UpdateApplicationDto } from './dto/update-application.dto';
+import { UpdateApplicationFilesDto } from './dto/update-application-file.dto';
+import { Scholarship } from 'src/models/scholarship.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -26,6 +22,8 @@ export class ApplicationService {
     private readonly configRepository: Repository<Config>,
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Scholarship)
+    private readonly scholarshipRepository: Repository<Scholarship>,
   ) {}
 
   async create(
@@ -49,13 +47,19 @@ export class ApplicationService {
       },
     });
 
+    const scholarship = await this.scholarshipRepository.findOneByOrFail({
+      id: createApplicationDto.scholarId,
+    });
+
+    const requestAmount = scholarship.amount
+      ? null
+      : createApplicationDto.budget;
+
     const application = this.applicationRepository.create({
       student: student,
       semester: config.applySemester,
-      scholarship: {
-        id: createApplicationDto.scholarId,
-      },
-      requestAmount: createApplicationDto.budget,
+      scholarship: scholarship,
+      requestAmount: requestAmount,
       applicationDocument: appDockey,
     });
     await this.applicationRepository.save(application);
@@ -66,6 +70,79 @@ export class ApplicationService {
       file.doc[0].buffer,
       file.doc[0].mimetype,
     );
+  }
+
+  async update(
+    id: number,
+    updateApplicationDto: UpdateApplicationDto,
+    file: UpdateApplicationFilesDto,
+    userId: string,
+  ) {
+    const appDockey = userId + '_' + Date.now();
+    const application = await this.applicationRepository.findOne({
+      where: {
+        id,
+        student: {
+          user: {
+            id: userId,
+          },
+        },
+        submissionTime: IsNull(),
+      },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    const scholarship = await this.scholarshipRepository.findOneByOrFail({
+      id: updateApplicationDto.scholarId,
+    });
+
+    const requestAmount = scholarship.amount
+      ? null
+      : updateApplicationDto.budget;
+
+    if (file.doc) {
+      application.applicationDocument = appDockey;
+      this.s3Service.uploadFile(
+        'major-scholar-app-doc',
+        appDockey,
+        file.doc[0].buffer,
+        file.doc[0].mimetype,
+      );
+    }
+
+    await this.applicationRepository.update(id, {
+      scholarship: scholarship,
+      requestAmount: requestAmount,
+      applicationDocument: application.applicationDocument,
+    });
+  }
+
+  async submit(id: number, userId: string) {
+    const application = await this.applicationRepository.findOne({
+      where: {
+        id,
+        student: {
+          user: {
+            id: userId,
+          },
+        },
+        submissionTime: IsNull(),
+      },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    const now = new Date();
+    now.setHours(7, 0, 0, 0);
+
+    await this.applicationRepository.update(id, {
+      submissionTime: now,
+    });
   }
 
   async findOne(id: number, userId: string, roles: Role[]) {
@@ -131,10 +208,6 @@ export class ApplicationService {
             id: userId,
           },
         },
-        scholarship: {
-          openDate: LessThanOrEqual(now),
-          closeDate: MoreThanOrEqual(now),
-        },
       },
       relations: { scholarship: true, semester: { year: true } },
     });
@@ -144,6 +217,7 @@ export class ApplicationService {
       scholarName: application.scholarship.name,
       year: application.semester.year.year,
       semester: application.semester.semester,
+      submissionTime: application.submissionTime,
       adminApproveTime: application.adminApprovalTime,
     }));
   }
@@ -155,6 +229,7 @@ export class ApplicationService {
           semester,
           year: { year },
         },
+        submissionTime: Not(IsNull()),
         adminApprovalTime: IsNull(),
       },
       relations: {

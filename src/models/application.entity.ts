@@ -38,6 +38,9 @@ export class Application extends BaseEntity {
   applicationDocument: string;
 
   @Column({ nullable: true, default: null })
+  submissionTime: Date | null;
+
+  @Column({ nullable: true, default: null })
   adminApprovalTime: Date | null;
 
   @Column({ nullable: true, default: null })
