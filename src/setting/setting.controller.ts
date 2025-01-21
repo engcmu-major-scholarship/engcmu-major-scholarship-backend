@@ -13,6 +13,12 @@ export class SettingController {
     return this.settingService.findCurrentYearSemester();
   }
 
+  @Public()
+  @Get('years-and-semesters')
+  findYears() {
+    return this.settingService.findYearsAndSemesters();
+  }
+
   @Get()
   find() {
     return this.settingService.find();

@@ -34,6 +34,21 @@ export class SettingService {
     };
   }
 
+  async findYearsAndSemesters() {
+    const years = await this.yearRepository.find({
+      relations: {
+        semesters: true,
+      },
+    });
+
+    return years.map((year) => {
+      return {
+        year: year.year,
+        semesters: year.semesters.map((semester) => semester.semester),
+      };
+    });
+  }
+
   create(createSettingDto: CreateSettingDto) {
     return 'This action adds a new setting';
   }
