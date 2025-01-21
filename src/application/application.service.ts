@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/models/application.entity';
 import { Config } from 'src/models/config.entity';
@@ -11,6 +15,7 @@ import { Role } from 'src/auth/types/Role';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { UpdateApplicationFilesDto } from './dto/update-application-file.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
+import { isNotEmptyObject } from 'class-validator';
 
 @Injectable()
 export class ApplicationService {
@@ -89,6 +94,9 @@ export class ApplicationService {
         },
         submissionTime: IsNull(),
       },
+      relations: {
+        scholarship: true,
+      },
     });
 
     if (!application) {
@@ -96,7 +104,7 @@ export class ApplicationService {
     }
 
     const scholarship = await this.scholarshipRepository.findOneByOrFail({
-      id: updateApplicationDto.scholarId,
+      id: updateApplicationDto.scholarId ?? application.scholarship.id,
     });
 
     const requestAmount = scholarship.amount
@@ -113,11 +121,15 @@ export class ApplicationService {
       );
     }
 
-    await this.applicationRepository.update(id, {
-      scholarship: scholarship,
-      requestAmount: requestAmount,
-      applicationDocument: application.applicationDocument,
-    });
+    if (isNotEmptyObject(updateApplicationDto)) {
+      await this.applicationRepository.update(id, {
+        scholarship: scholarship,
+        requestAmount: requestAmount,
+        applicationDocument: application.applicationDocument,
+      });
+    } else {
+      if (!file) throw new UnprocessableEntityException('No data to update');
+    }
   }
 
   async submit(id: number, userId: string) {
@@ -155,6 +167,9 @@ export class ApplicationService {
           scholarship: true,
         },
       });
+      if (!application) {
+        throw new NotFoundException('Application not found');
+      }
       return {
         scholarId: application.scholarship.id,
         budget: application.requestAmount,
@@ -343,6 +358,7 @@ export class ApplicationService {
       budget: app.requestAmount,
       year: app.semester.year.year,
       semester: app.semester.semester,
+      submissionTime: app.submissionTime,
       adminApprovalTime: app.adminApprovalTime,
     }));
   }
