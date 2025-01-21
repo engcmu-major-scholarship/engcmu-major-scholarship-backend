@@ -34,12 +34,6 @@ export class ApplicationService {
     userId: string,
   ) {
     const appDockey = userId + '_' + Date.now();
-    this.s3Service.uploadFile(
-      'major-scholar-app-doc',
-      appDockey,
-      file.doc[0].buffer,
-      file.doc[0].mimetype,
-    );
     const config = await this.configRepository.findOneOrFail({
       where: {
         id: 1,
@@ -65,6 +59,13 @@ export class ApplicationService {
       applicationDocument: appDockey,
     });
     await this.applicationRepository.save(application);
+
+    this.s3Service.uploadFile(
+      'major-scholar-app-doc',
+      appDockey,
+      file.doc[0].buffer,
+      file.doc[0].mimetype,
+    );
   }
 
   async findOne(id: number, userId: string, roles: Role[]) {

@@ -34,19 +34,7 @@ export class ScholarshipService {
     }
 
     const scholarDocKey = createScholarshipDto.name;
-    this.s3Service.uploadFile(
-      'major-scholar-scholar-doc',
-      scholarDocKey,
-      files.scholarDoc[0].buffer,
-      files.scholarDoc[0].mimetype,
-    );
     const scholarAppDocKey = createScholarshipDto.name;
-    this.s3Service.uploadFile(
-      'major-scholar-app-doc-template',
-      scholarAppDocKey,
-      files.appDoc[0].buffer,
-      files.appDoc[0].mimetype,
-    );
 
     const scholarship = this.scholarshipRepository.create({
       name: createScholarshipDto.name,
@@ -60,6 +48,19 @@ export class ScholarshipService {
       published: createScholarshipDto.published,
     });
     await this.scholarshipRepository.save(scholarship);
+
+    this.s3Service.uploadFile(
+      'major-scholar-scholar-doc',
+      scholarDocKey,
+      files.scholarDoc[0].buffer,
+      files.scholarDoc[0].mimetype,
+    );
+    this.s3Service.uploadFile(
+      'major-scholar-app-doc-template',
+      scholarAppDocKey,
+      files.appDoc[0].buffer,
+      files.appDoc[0].mimetype,
+    );
   }
 
   async findAllPublic() {
@@ -155,24 +156,8 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
-    if (files.scholarDoc) {
-      const scholarDocKey = scholarship.detailDocument;
-      this.s3Service.uploadFile(
-        'major-scholar-scholar-doc',
-        scholarDocKey,
-        files.scholarDoc[0].buffer,
-        files.scholarDoc[0].mimetype,
-      );
-    }
-    if (files.appDoc) {
-      const scholarAppDocKey = scholarship.applicationDocument;
-      this.s3Service.uploadFile(
-        'major-scholar-app-doc-template',
-        scholarAppDocKey,
-        files.appDoc[0].buffer,
-        files.appDoc[0].mimetype,
-      );
-    }
+    const scholarDocKey = scholarship.detailDocument;
+    const scholarAppDocKey = scholarship.applicationDocument;
 
     if (isNotEmptyObject(updateScholarshipDto)) {
       await this.scholarshipRepository.update(id, {
@@ -186,6 +171,23 @@ export class ScholarshipService {
       });
     } else {
       if (!files) throw new UnprocessableEntityException('No data to update');
+    }
+
+    if (files.scholarDoc) {
+      this.s3Service.uploadFile(
+        'major-scholar-scholar-doc',
+        scholarDocKey,
+        files.scholarDoc[0].buffer,
+        files.scholarDoc[0].mimetype,
+      );
+    }
+    if (files.appDoc) {
+      this.s3Service.uploadFile(
+        'major-scholar-app-doc-template',
+        scholarAppDocKey,
+        files.appDoc[0].buffer,
+        files.appDoc[0].mimetype,
+      );
     }
   }
 
