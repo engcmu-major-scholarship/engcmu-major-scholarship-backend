@@ -78,6 +78,12 @@ export class ScholarshipController {
     return this.scholarshipService.findAllPublic();
   }
 
+  @Public()
+  @Get('applyable')
+  findApplyable() {
+    return this.scholarshipService.findApplyable();
+  }
+
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('admin')

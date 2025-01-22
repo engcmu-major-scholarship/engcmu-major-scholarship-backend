@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Semester } from './semester';
 
 @Entity()
 export class Year extends BaseEntity {
@@ -7,4 +14,7 @@ export class Year extends BaseEntity {
 
   @Column({ unique: true })
   year: number;
+
+  @OneToMany(() => Semester, (semester) => semester.year)
+  semesters: Semester[];
 }

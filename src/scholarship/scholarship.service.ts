@@ -7,7 +7,7 @@ import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Scholarship } from 'src/models/scholarship.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { S3Service } from 'src/s3/s3.service';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
@@ -34,19 +34,7 @@ export class ScholarshipService {
     }
 
     const scholarDocKey = createScholarshipDto.name;
-    this.s3Service.uploadFile(
-      'major-scholar-scholar-doc',
-      scholarDocKey,
-      files.scholarDoc[0].buffer,
-      files.scholarDoc[0].mimetype,
-    );
     const scholarAppDocKey = createScholarshipDto.name;
-    this.s3Service.uploadFile(
-      'major-scholar-app-doc-template',
-      scholarAppDocKey,
-      files.appDoc[0].buffer,
-      files.appDoc[0].mimetype,
-    );
 
     const scholarship = this.scholarshipRepository.create({
       name: createScholarshipDto.name,
@@ -60,6 +48,19 @@ export class ScholarshipService {
       published: createScholarshipDto.published,
     });
     await this.scholarshipRepository.save(scholarship);
+
+    await this.s3Service.uploadFile(
+      'major-scholar-scholar-doc',
+      scholarDocKey,
+      files.scholarDoc[0].buffer,
+      files.scholarDoc[0].mimetype,
+    );
+    await this.s3Service.uploadFile(
+      'major-scholar-app-doc-template',
+      scholarAppDocKey,
+      files.appDoc[0].buffer,
+      files.appDoc[0].mimetype,
+    );
   }
 
   async findAllPublic() {
@@ -70,6 +71,21 @@ export class ScholarshipService {
       id: scholarship.id,
       name: scholarship.name,
       description: scholarship.description,
+    }));
+  }
+
+  async findApplyable() {
+    const now = new Date();
+    now.setHours(7, 0, 0, 0);
+    const scholarships = await this.scholarshipRepository.findBy({
+      published: true,
+      openDate: LessThanOrEqual(now),
+      closeDate: MoreThanOrEqual(now),
+    });
+    return scholarships.map((scholarship) => ({
+      id: scholarship.id,
+      name: scholarship.name,
+      defaultBudget: scholarship.amount,
     }));
   }
 
@@ -140,24 +156,8 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
-    if (files.scholarDoc) {
-      const scholarDocKey = scholarship.detailDocument;
-      this.s3Service.uploadFile(
-        'major-scholar-scholar-doc',
-        scholarDocKey,
-        files.scholarDoc[0].buffer,
-        files.scholarDoc[0].mimetype,
-      );
-    }
-    if (files.appDoc) {
-      const scholarAppDocKey = scholarship.applicationDocument;
-      this.s3Service.uploadFile(
-        'major-scholar-app-doc',
-        scholarAppDocKey,
-        files.appDoc[0].buffer,
-        files.appDoc[0].mimetype,
-      );
-    }
+    const scholarDocKey = scholarship.detailDocument;
+    const scholarAppDocKey = scholarship.applicationDocument;
 
     if (isNotEmptyObject(updateScholarshipDto)) {
       await this.scholarshipRepository.update(id, {
@@ -170,7 +170,24 @@ export class ScholarshipService {
         published: updateScholarshipDto.published,
       });
     } else {
-      throw new UnprocessableEntityException('No data to update');
+      if (!files) throw new UnprocessableEntityException('No data to update');
+    }
+
+    if (files.scholarDoc) {
+      await this.s3Service.uploadFile(
+        'major-scholar-scholar-doc',
+        scholarDocKey,
+        files.scholarDoc[0].buffer,
+        files.scholarDoc[0].mimetype,
+      );
+    }
+    if (files.appDoc) {
+      await this.s3Service.uploadFile(
+        'major-scholar-app-doc-template',
+        scholarAppDocKey,
+        files.appDoc[0].buffer,
+        files.appDoc[0].mimetype,
+      );
     }
   }
 

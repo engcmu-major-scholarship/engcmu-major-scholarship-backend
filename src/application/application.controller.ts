@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -14,7 +15,7 @@ import { Role } from 'src/auth/types/Role';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/types/TokenPayload';
 import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
-import { CreateApplicationFileDto } from './dto/create-application-file.dto';
+import { CreateApplicationFilesDto } from './dto/create-application-files.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
 import {
@@ -23,6 +24,8 @@ import {
   ApiBodyOptions,
   ApiConsumes,
 } from '@nestjs/swagger';
+import { UpdateApplicationDto } from './dto/update-application.dto';
+import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {
@@ -45,21 +48,57 @@ export class ApplicationController {
   @Roles(Role.STUDENT)
   @Post()
   @UseInterceptors(
-    FileFieldsByTypeInterceptor<CreateApplicationFileDto>({
+    FileFieldsByTypeInterceptor<CreateApplicationFilesDto>({
       doc: { maxCount: 1 },
     }),
   )
   create(
     @Body() createApplicationDto: CreateApplicationDto,
     @UploadedFiles(
-      new ParseFileFieldsPipe<CreateApplicationFileDto>({
+      new ParseFileFieldsPipe<CreateApplicationFilesDto>({
         doc: { type: 'application/pdf', required: true, itemCount: 1 },
       }),
     )
-    file: CreateApplicationFileDto,
+    file: CreateApplicationFilesDto,
     @User() user: TokenPayload,
   ) {
     return this.applicationService.create(createApplicationDto, file, user.sub);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
+  @Roles(Role.STUDENT)
+  @Patch(':id')
+  @UseInterceptors(
+    FileFieldsByTypeInterceptor<CreateApplicationFilesDto>({
+      doc: { maxCount: 1 },
+    }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() createApplicationDto: UpdateApplicationDto,
+    @UploadedFiles(
+      new ParseFileFieldsPipe<UpdateApplicationFilesDto>({
+        doc: { type: 'application/pdf', itemCount: 1 },
+      }),
+    )
+    file: UpdateApplicationFilesDto,
+    @User() user: TokenPayload,
+  ) {
+    return this.applicationService.update(
+      id,
+      createApplicationDto,
+      file,
+      user.sub,
+    );
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.STUDENT)
+  @Patch('submit/:id')
+  submit(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
+    return this.applicationService.submit(id, user.sub);
   }
 
   @ApiBearerAuth()
@@ -101,5 +140,12 @@ export class ApplicationController {
   @Get('history/:studentId')
   getApplicationHistoryByStudentID(@Param('studentId') stuId: string) {
     return this.applicationService.findApplicationHistoryByStudentId(stuId);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN, Role.STUDENT)
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
+    return this.applicationService.findOne(id, user.sub, user.roles);
   }
 }

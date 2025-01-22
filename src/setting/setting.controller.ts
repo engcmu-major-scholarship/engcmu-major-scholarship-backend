@@ -1,36 +1,27 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SettingService } from './setting.service';
-import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Role } from 'src/auth/types/Role';
+import { Public } from 'src/decorators/public.decorator';
 
-@Roles(Role.ADMIN)
 @Controller('setting')
 export class SettingController {
   constructor(private readonly settingService: SettingService) {}
 
-  @Post()
-  create(@Body() createSettingDto: CreateSettingDto) {
-    return this.settingService.create(createSettingDto);
+  @Public()
+  @Get('current-year-semester')
+  findCurrentYearSemester() {
+    return this.settingService.findCurrentYearSemester();
+  }
+
+  @Public()
+  @Get('years-and-semesters')
+  findYears() {
+    return this.settingService.findYearsAndSemesters();
   }
 
   @Get()
-  findAll() {
-    return this.settingService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.settingService.findOne(+id);
+  find() {
+    return this.settingService.find();
   }
 
   @Patch(':id')
