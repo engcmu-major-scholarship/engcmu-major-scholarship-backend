@@ -13,7 +13,7 @@ import { S3Service } from 'src/s3/s3.service';
 import { Student } from 'src/models/student.entity';
 import { Role } from 'src/auth/types/Role';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { UpdateApplicationFilesDto } from './dto/update-application-file.dto';
+import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { isNotEmptyObject } from 'class-validator';
 
