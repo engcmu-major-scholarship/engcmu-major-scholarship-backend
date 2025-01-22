@@ -40,7 +40,7 @@ export class AuthService {
       CMUAccount: cmuAccountInfo.cmuitaccount,
     });
     if (!user) {
-      return this.signup(token);
+      return await this.signup(token);
     }
 
     const roles = [];
