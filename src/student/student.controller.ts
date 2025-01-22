@@ -1,10 +1,37 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiBodyOptions,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/types/TokenPayload';
+import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
+import { UpdateStudentDto } from './dto/update-student.dto';
+import { UpdateStudentFilesDto } from './dto/update-student-files.dto';
+import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
+
+const apiBodyOptions: ApiBodyOptions = {
+  schema: {
+    type: 'object',
+    properties: {
+      advisorId: { type: 'number' },
+      studentIdCard: { type: 'string', format: 'binary' },
+      bookBank: { type: 'string', format: 'binary' },
+    },
+  },
+};
 
 @Controller('student')
 export class StudentController {
@@ -15,5 +42,30 @@ export class StudentController {
   @Get()
   getStudent(@User() user: TokenPayload) {
     return this.studentService.getStudent(user.sub);
+  }
+
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody(apiBodyOptions)
+  @Roles(Role.STUDENT)
+  @Patch()
+  @UseInterceptors(
+    FileFieldsByTypeInterceptor<UpdateStudentFilesDto>({
+      studentIdCard: { maxCount: 1 },
+      bookBank: { maxCount: 1 },
+    }),
+  )
+  updateStudent(
+    @Body() updateStudentDto: UpdateStudentDto,
+    @UploadedFiles(
+      new ParseFileFieldsPipe<UpdateStudentFilesDto>({
+        studentIdCard: { type: /^image\/.+$/gm, itemCount: 1 },
+        bookBank: { type: /^image\/.+$/gm, itemCount: 1 },
+      }),
+    )
+    files: UpdateStudentFilesDto,
+    @User() user: TokenPayload,
+  ) {
+    return this.studentService.updateStudent(updateStudentDto, files, user.sub);
   }
 }
