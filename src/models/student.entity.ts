@@ -29,9 +29,9 @@ export class Student extends BaseEntity {
   @JoinColumn()
   advisor: Advisor;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: null })
   studentIdCard: string | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: null })
   bookBank: string | null;
 }

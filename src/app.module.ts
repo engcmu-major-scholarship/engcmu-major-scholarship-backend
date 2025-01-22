@@ -8,6 +8,7 @@ import { S3Module } from './s3/s3.module';
 import { ScholarshipModule } from './scholarship/scholarship.module';
 import { ApplicationModule } from './application/application.module';
 import { SettingModule } from './setting/setting.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SettingModule } from './setting/setting.module';
     ScholarshipModule,
     ApplicationModule,
     SettingModule,
+    StudentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
