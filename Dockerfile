@@ -51,7 +51,7 @@ RUN npm run build
 FROM base AS final
 
 # Use production node environment by default.
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Run the application as a non-root user.
 USER node
@@ -69,4 +69,4 @@ COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 3000
 
 # Run the application.
-CMD npm run start:prod
+CMD ["npm", "run", "start:prod"]
