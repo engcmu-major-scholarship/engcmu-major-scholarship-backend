@@ -209,8 +209,6 @@ export class ApplicationService {
   }
 
   async findCurrentYear(userId: string) {
-    const now = new Date();
-    now.setHours(7, 0, 0, 0);
     const config = await this.configRepository.findOneByOrFail({
       id: 1,
     });
