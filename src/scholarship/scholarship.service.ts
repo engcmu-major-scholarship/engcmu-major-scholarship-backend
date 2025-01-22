@@ -49,13 +49,13 @@ export class ScholarshipService {
     });
     await this.scholarshipRepository.save(scholarship);
 
-    this.s3Service.uploadFile(
+    await this.s3Service.uploadFile(
       'major-scholar-scholar-doc',
       scholarDocKey,
       files.scholarDoc[0].buffer,
       files.scholarDoc[0].mimetype,
     );
-    this.s3Service.uploadFile(
+    await this.s3Service.uploadFile(
       'major-scholar-app-doc-template',
       scholarAppDocKey,
       files.appDoc[0].buffer,
@@ -174,7 +174,7 @@ export class ScholarshipService {
     }
 
     if (files.scholarDoc) {
-      this.s3Service.uploadFile(
+      await this.s3Service.uploadFile(
         'major-scholar-scholar-doc',
         scholarDocKey,
         files.scholarDoc[0].buffer,
@@ -182,7 +182,7 @@ export class ScholarshipService {
       );
     }
     if (files.appDoc) {
-      this.s3Service.uploadFile(
+      await this.s3Service.uploadFile(
         'major-scholar-app-doc-template',
         scholarAppDocKey,
         files.appDoc[0].buffer,

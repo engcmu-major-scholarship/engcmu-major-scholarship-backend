@@ -69,7 +69,7 @@ export class ApplicationService {
     });
     await this.applicationRepository.save(application);
 
-    this.s3Service.uploadFile(
+    await this.s3Service.uploadFile(
       'major-scholar-app-doc',
       appDockey,
       file.doc[0].buffer,
@@ -113,7 +113,7 @@ export class ApplicationService {
 
     if (file.doc) {
       application.applicationDocument = appDockey;
-      this.s3Service.uploadFile(
+      await this.s3Service.uploadFile(
         'major-scholar-app-doc',
         appDockey,
         file.doc[0].buffer,
