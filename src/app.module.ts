@@ -9,6 +9,7 @@ import { ScholarshipModule } from './scholarship/scholarship.module';
 import { ApplicationModule } from './application/application.module';
 import { SettingModule } from './setting/setting.module';
 import { StudentModule } from './student/student.module';
+import { AdvisorModule } from './advisor/advisor.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { StudentModule } from './student/student.module';
     ApplicationModule,
     SettingModule,
     StudentModule,
+    AdvisorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
