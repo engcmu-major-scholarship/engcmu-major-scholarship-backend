@@ -60,7 +60,6 @@ export class StudentService {
     files: UpdateStudentFilesDto,
     userId: string,
   ) {
-    console.log(updateStudentDto);
     const student = await this.studentRepository.findOne({
       where: {
         user: {
