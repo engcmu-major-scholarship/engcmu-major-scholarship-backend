@@ -15,10 +15,10 @@ import { CreateScholarshipDto } from './dto/create-scholarship.dto';
 import { UpdateScholarshipDto } from './dto/update-scholarship.dto';
 import { CreateScholarshipFilesDto } from './dto/create-scholarship-files.dto';
 import { Public } from 'src/decorators/public.decorator';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
+import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
-import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
+import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-by-type.interceptor';
 import { UpdateScholarshipFilesDto } from './dto/update-scholarship-files.dto';
 import {
   ApiBearerAuth,

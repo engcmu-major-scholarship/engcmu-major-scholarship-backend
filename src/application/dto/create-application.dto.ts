@@ -1,7 +1,7 @@
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { FormDataTransformer } from 'src/utils/Tranformer/FormData.Tranformer';
+import { FormDataTransformer } from 'src/utils/transformer/form-data.transformer';
 
 export class CreateApplicationDto {
   @ApiProperty()

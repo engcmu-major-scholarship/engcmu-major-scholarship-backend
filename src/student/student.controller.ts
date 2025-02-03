@@ -17,10 +17,10 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/types/TokenPayload';
-import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
+import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-by-type.interceptor';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { UpdateStudentFilesDto } from './dto/update-student-files.dto';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
+import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {

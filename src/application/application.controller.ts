@@ -14,10 +14,10 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { User } from 'src/decorators/user.decorator';
 import { TokenPayload } from 'src/auth/types/TokenPayload';
-import { FileFieldsByTypeInterceptor } from 'src/utils/Interceptor/FileFieldsByType.Interceptor';
+import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-by-type.interceptor';
 import { CreateApplicationFilesDto } from './dto/create-application-files.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
-import { ParseFileFieldsPipe } from 'src/utils/Pipe/ParseFileFields.Pipe';
+import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
 import {
   ApiBearerAuth,
   ApiBody,

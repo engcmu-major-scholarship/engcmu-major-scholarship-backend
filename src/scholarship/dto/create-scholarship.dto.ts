@@ -9,7 +9,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { FormDataTransformer } from 'src/utils/Tranformer/FormData.Tranformer';
+import { FormDataTransformer } from 'src/utils/transformer/form-data.transformer';
 
 export class CreateScholarshipDto {
   @ApiProperty()
