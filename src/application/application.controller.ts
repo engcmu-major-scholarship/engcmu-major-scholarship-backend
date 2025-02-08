@@ -17,6 +17,7 @@ import { TokenPayload } from 'src/auth/types/TokenPayload';
 import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-by-type.interceptor';
 import { CreateApplicationFilesDto } from './dto/create-application-files.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { ApplicationApprove } from './dto/application-approve.dto';
 import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
 import {
   ApiBearerAuth,
@@ -147,5 +148,22 @@ export class ApplicationController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
     return this.applicationService.findOne(id, user.sub, user.roles);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('document/:appId')
+  getApplicationDocumentByAppId(@Param('appId') id: number) {
+    return this.applicationService.findApplication(id);
+  }
+
+  @Patch('approve/:id')
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  async approveApplication(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() applicationApprove: ApplicationApprove,
+  ) {
+    return this.applicationService.approveApplication(id, applicationApprove);
   }
 }

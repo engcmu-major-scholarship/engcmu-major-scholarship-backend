@@ -16,6 +16,7 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { isNotEmptyObject } from 'class-validator';
+import { ApplicationApprove } from './dto/application-approve.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -405,5 +406,45 @@ export class ApplicationService {
       year: app.semester.year.year,
       semester: app.semester.semester,
     }));
+  }
+
+  async findApplication(id: number) {
+    const application = await this.applicationRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        scholarship: true,
+      },
+    });
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+    return {
+      docLink: await this.s3Service.getFileUrl(
+        'major-scholar-app-doc',
+        application.applicationDocument,
+      ),
+    };
+  }
+
+  async approveApplication(id: number, applicationApprove: ApplicationApprove) {
+    const application = await this.applicationRepository.findOne({
+      where: { id },
+      relations: {
+        scholarship: true,
+      },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+
+    application.adminApprovalTime = new Date();
+    application.approvalComment = applicationApprove.comment ?? null;
+
+    await this.applicationRepository.save(application);
+
+    return { message: 'Application approved successfully', application };
   }
 }
