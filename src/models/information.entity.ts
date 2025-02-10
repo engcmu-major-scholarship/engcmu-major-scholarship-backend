@@ -12,7 +12,7 @@ export class Information extends BaseEntity {
   description: string;
 
   @Column()
-  PDFDocument: string;
+  detailDocument: string;
 
   @Column()
   published: boolean;
