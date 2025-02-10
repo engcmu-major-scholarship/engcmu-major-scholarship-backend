@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { FormDataTransformer } from 'src/utils/transformer/form-data.transformer';
 
 export class CreateInformationDto {
   @ApiProperty()
@@ -14,5 +16,6 @@ export class CreateInformationDto {
 
   @ApiProperty()
   @IsBoolean()
+  @Transform(FormDataTransformer)
   published: boolean;
 }
