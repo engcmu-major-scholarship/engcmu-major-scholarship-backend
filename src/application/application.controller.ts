@@ -26,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
+import { Student } from 'src/models/student.entity';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {
@@ -147,5 +148,12 @@ export class ApplicationController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
     return this.applicationService.findOne(id, user.sub, user.roles);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('application/document/:studentId')
+  getApproveStudentDoc(@Param('studentId') studentId: string) {
+    return this.applicationService.GetApproveStudentDoc(studentId);
   }
 }

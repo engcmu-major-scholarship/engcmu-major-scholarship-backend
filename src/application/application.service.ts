@@ -406,4 +406,19 @@ export class ApplicationService {
       semester: app.semester.semester,
     }));
   }
+
+  async GetApproveStudentDoc(student: string) {
+    try {
+      const StudentDoc = await this.studentRepository.findOneOrFail({
+        where: { id: student },
+      });
+
+      return {
+        studentIdCardDocLink: StudentDoc.studentIdCard,
+        studentbookBankDocLink: StudentDoc.bookBank,
+      };
+    } catch (error) {
+      throw new Error(`Student document not found for ID: ${student}`);
+    }
+  }
 }
