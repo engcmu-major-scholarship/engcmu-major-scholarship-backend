@@ -8,6 +8,7 @@ import {
   Post,
   UploadedFiles,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { Roles } from 'src/decorators/roles.decorator';
