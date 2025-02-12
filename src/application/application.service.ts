@@ -411,7 +411,7 @@ export class ApplicationService {
     const studentList = await this.studentRepository.find({
       where: [
         {
-          id: search,
+          id: ILike(`%${search}%`),
         },
         {
           firstName: ILike(`%${search}%`),
