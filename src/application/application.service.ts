@@ -407,18 +407,35 @@ export class ApplicationService {
     }));
   }
 
-  async GetApproveStudentDoc(student: string) {
+  async GetApproveStudentDoc(studentId: string) {
     try {
-      const StudentDoc = await this.studentRepository.findOneOrFail({
-        where: { id: student },
+      // Check if the student has an approved application
+      const application = await this.applicationRepository.findOne({
+        where: {
+          student: {
+            id: studentId,
+          },
+          adminApprovalTime: Not(IsNull()),
+        },
+        relations: {
+          student: true,
+        },
       });
 
+      // If no approved application is found, return an error
+      if (!application) {
+        throw new Error(
+          `No approved application found for Student ID: ${studentId}`,
+        );
+      }
+
+      // Return the student's document details
       return {
-        studentIdCardDocLink: StudentDoc.studentIdCard,
-        studentbookBankDocLink: StudentDoc.bookBank,
+        studentIdCardDocLink: application.student.studentIdCard,
+        studentbookBankDocLink: application.student.bookBank,
       };
     } catch (error) {
-      throw new Error(`Student document not found for ID: ${student}`);
+      throw new Error(error.message || 'Error retrieving student document');
     }
   }
 }
