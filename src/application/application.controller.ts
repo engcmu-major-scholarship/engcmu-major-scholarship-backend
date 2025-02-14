@@ -149,11 +149,4 @@ export class ApplicationController {
   findOne(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
     return this.applicationService.findOne(id, user.sub, user.roles);
   }
-
-  @ApiBearerAuth()
-  @Roles(Role.ADMIN)
-  @Get('application/document/:studentId')
-  getApproveStudentDoc(@Param('studentId') studentId: string) {
-    return this.applicationService.GetApproveStudentDoc(studentId);
-  }
 }
