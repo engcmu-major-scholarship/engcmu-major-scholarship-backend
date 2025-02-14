@@ -26,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
+import { Student } from 'src/models/student.entity';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {

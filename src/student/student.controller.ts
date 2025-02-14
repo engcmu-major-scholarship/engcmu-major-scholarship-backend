@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   UploadedFiles,
   UseInterceptors,
@@ -67,5 +68,12 @@ export class StudentController {
     @User() user: TokenPayload,
   ) {
     return this.studentService.updateStudent(updateStudentDto, files, user.sub);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('/:studentId')
+  getApproveStudentDoc(@Param('studentId') studentId: string) {
+    return this.studentService.GetApproveStudentDoc(studentId);
   }
 }
