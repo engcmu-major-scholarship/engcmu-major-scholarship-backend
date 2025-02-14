@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -408,24 +409,40 @@ export class ApplicationService {
   }
 
   async findStudentFromSearch(search: string) {
-    const studentList = await this.studentRepository.find({
-      where: [
-        {
-          id: ILike(`%${search}%`),
+    try {
+      if (!search || search.trim() === '') {
+        throw new BadRequestException('Search cannot be empty.');
+      }
+      const studentList = await this.applicationRepository.find({
+        where: [
+          {
+            student: {
+              id: ILike(`%${search}%`),
+            },
+          },
+          {
+            student: {
+              firstName: ILike(`%${search}%`),
+            },
+          },
+          {
+            student: {
+              lastName: ILike(`%${search}%`),
+            },
+          },
+        ],
+        relations: {
+          student: true,
         },
-        {
-          firstName: ILike(`%${search}%`),
-        },
-        {
-          lastName: ILike(`%${search}%`),
-        },
-      ],
-    });
+      });
 
-    return studentList.map((list) => ({
-      StudentId: list.id,
-      firstname: list.firstName,
-      lastname: list.lastName,
-    }));
+      return studentList.map((list) => ({
+        StudentId: list.student.id,
+        firstname: list.student.firstName,
+        lastname: list.student.lastName,
+      }));
+    } catch (error) {
+      throw new NotFoundException(`No found for : ${search}`);
+    }
   }
 }
