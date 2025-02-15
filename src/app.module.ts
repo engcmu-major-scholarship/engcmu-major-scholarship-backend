@@ -10,6 +10,7 @@ import { ApplicationModule } from './application/application.module';
 import { SettingModule } from './setting/setting.module';
 import { StudentModule } from './student/student.module';
 import { AdvisorModule } from './advisor/advisor.module';
+import { InformationModule } from './information/information.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { AdvisorModule } from './advisor/advisor.module';
     SettingModule,
     StudentModule,
     AdvisorModule,
+    InformationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
