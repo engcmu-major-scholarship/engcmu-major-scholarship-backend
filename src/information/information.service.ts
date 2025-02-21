@@ -38,7 +38,7 @@ export class InformationService {
     const information = this.informationRepository.create({
       name: createInformationDto.name,
       description: createInformationDto.description,
-      detailDocument: informationDocKey,
+      PDFDocument: informationDocKey,
       published: createInformationDto.published,
     });
     await this.informationRepository.save(information);
@@ -72,7 +72,7 @@ export class InformationService {
       throw new NotFoundException('Information not found');
     }
 
-    const informationDocKey = information.detailDocument;
+    const informationDocKey = information.PDFDocument;
     if (isNotEmptyObject(updateInformationDto)) {
       await this.informationRepository.update(id, {
         name: updateInformationDto.name,
