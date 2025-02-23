@@ -1,13 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Information } from 'src/models/information.entity';
-import { S3Service } from 'src/s3/s3.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class InformationService {
   constructor(
-    private readonly s3Service: S3Service,
     @InjectRepository(Information)
     private readonly informationRepository: Repository<Information>,
   ) {}
@@ -25,13 +23,8 @@ export class InformationService {
     return {
       name: information.name,
       description: information.description,
-      openDate: information.openDate,
-      closeDate: information.closeDate,
+      docLink: information.PDFDocument,
       published: information.published,
-      docLink: await this.s3Service.getFileUrl(
-        'major-scholar-info-doc',
-        information.PDFDocument,
-      ),
     };
   }
 

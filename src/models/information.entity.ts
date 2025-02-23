@@ -12,12 +12,6 @@ export class Information extends BaseEntity {
   description: string;
 
   @Column()
-  openDate: Date;
-
-  @Column()
-  closeDate: Date;
-
-  @Column()
   PDFDocument: string;
 
   @Column()
