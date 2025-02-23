@@ -74,6 +74,6 @@ export class StudentController {
   @Roles(Role.ADMIN)
   @Get(':studentId')
   getApproveStudentDoc(@Param('studentId') studentId: string) {
-    return this.studentService.GetApproveStudentDoc(studentId);
+    return this.studentService.getApproveStudentDoc(studentId);
   }
 }

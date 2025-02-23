@@ -110,7 +110,7 @@ export class StudentService {
     }
   }
 
-  async GetApproveStudentDoc(studentId: string) {
+  async getApproveStudentDoc(studentId: string) {
     const student = await this.studentRepository.findOne({
       where: {
         id: studentId,
