@@ -1,5 +1,5 @@
 import { BadRequestException, PipeTransform } from '@nestjs/common';
-import { FileFields } from '../Types/FileFields';
+import { FileFields } from '../types/FileFields';
 
 export class ParseFileFieldsPipe<T extends FileFields<T>, R extends T = T>
   implements PipeTransform<T, R>

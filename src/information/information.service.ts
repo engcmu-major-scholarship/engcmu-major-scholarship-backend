@@ -72,7 +72,7 @@ export class InformationService {
       throw new NotFoundException('Information not found');
     }
 
-    const informationDocKey = information.PDFDocument;
+    const informationDocKey = information.PDFDocument; // FIXME: Posible bug by overwriting file when change name
     if (isNotEmptyObject(updateInformationDto)) {
       await this.informationRepository.update(id, {
         name: updateInformationDto.name,

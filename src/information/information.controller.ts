@@ -84,7 +84,7 @@ export class InformationController {
   @Roles(Role.ADMIN)
   @Patch(':id')
   @UseInterceptors(
-    FileFieldsByTypeInterceptor<CreateInformationFilesDto>({
+    FileFieldsByTypeInterceptor<UpdateInformationFilesDto>({
       informationDoc: { maxCount: 1 },
     }),
   )
@@ -101,7 +101,7 @@ export class InformationController {
     )
     files: UpdateInformationFilesDto,
   ) {
-    return this.informationService.update(+id, updateInformationDto, files);
+    return this.informationService.update(id, updateInformationDto, files);
   }
 
   @Delete(':id')

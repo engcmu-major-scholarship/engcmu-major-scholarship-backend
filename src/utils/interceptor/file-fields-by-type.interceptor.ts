@@ -4,7 +4,7 @@ import {
   MulterField,
   MulterOptions,
 } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import { FileFields } from '../Types/FileFields';
+import { FileFields } from '../types/FileFields';
 
 export function FileFieldsByTypeInterceptor<T extends FileFields<T>>(
   fieldsConfig: FieldsOption<T>,
