@@ -109,4 +109,31 @@ export class StudentService {
       }
     }
   }
+
+  async getApproveStudentDoc(studentId: string) {
+    const student = await this.studentRepository.findOne({
+      where: {
+        id: studentId,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundException(`Student with ID ${studentId} not found`);
+    }
+
+    return {
+      studentIDCardDocLink: student.studentIdCard
+        ? await this.s3Service.getFileUrl(
+            'major-scholar-student-id-card',
+            student.studentIdCard,
+          )
+        : null,
+      studentBookBankDocLink: student.bookBank
+        ? await this.s3Service.getFileUrl(
+            'major-scholar-student-book-bank',
+            student.bookBank,
+          )
+        : null,
+    };
+  }
 }
