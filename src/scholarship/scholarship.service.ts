@@ -156,8 +156,8 @@ export class ScholarshipService {
       throw new NotFoundException('Scholarship not found');
     }
 
-    const scholarDocKey = scholarship.detailDocument;
-    const scholarAppDocKey = scholarship.applicationDocument;
+    const scholarDocKey = scholarship.detailDocument; // FIXME: Posible bug by overwriting file when change name
+    const scholarAppDocKey = scholarship.applicationDocument; // FIXME: Posible bug by overwriting file when change name
 
     if (isNotEmptyObject(updateScholarshipDto)) {
       await this.scholarshipRepository.update(id, {
