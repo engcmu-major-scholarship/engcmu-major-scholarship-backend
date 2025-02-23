@@ -144,16 +144,16 @@ export class ApplicationController {
   }
 
   @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get()
+  getfindStudentFromSearch(@Query('search') search: string) {
+    return this.applicationService.findStudentFromSearch(search);
+  }
+
+  @ApiBearerAuth()
   @Roles(Role.ADMIN, Role.STUDENT)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @User() user: TokenPayload) {
     return this.applicationService.findOne(id, user.sub, user.roles);
-  }
-
-  @ApiBearerAuth()
-  @Roles(Role.ADMIN)
-  @Get('application')
-  getfindStudentFromSearch(@Query('search') search: string) {
-    return this.applicationService.findStudentFromSearch(search);
   }
 }
