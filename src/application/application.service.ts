@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -6,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Application } from 'src/models/application.entity';
 import { Config } from 'src/models/config.entity';
-import { Repository, Not, IsNull, LessThan } from 'typeorm';
+import { Repository, Not, IsNull, LessThan, ILike } from 'typeorm';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateApplicationFilesDto } from './dto/create-application-files.dto';
 import { S3Service } from 'src/s3/s3.service';
@@ -405,5 +406,43 @@ export class ApplicationService {
       year: app.semester.year.year,
       semester: app.semester.semester,
     }));
+  }
+
+  async findStudentFromSearch(search: string) {
+    try {
+      if (!search || search.trim() === '') {
+        throw new BadRequestException('Search cannot be empty.');
+      }
+      const studentList = await this.applicationRepository.find({
+        where: [
+          {
+            student: {
+              id: ILike(`%${search}%`),
+            },
+          },
+          {
+            student: {
+              firstName: ILike(`%${search}%`),
+            },
+          },
+          {
+            student: {
+              lastName: ILike(`%${search}%`),
+            },
+          },
+        ],
+        relations: {
+          student: true,
+        },
+      });
+
+      return studentList.map((list) => ({
+        StudentId: list.student.id,
+        firstname: list.student.firstName,
+        lastname: list.student.lastName,
+      }));
+    } catch (error) {
+      throw new NotFoundException(`No found for : ${search}`);
+    }
   }
 }
