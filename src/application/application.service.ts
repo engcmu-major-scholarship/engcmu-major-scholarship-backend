@@ -16,6 +16,7 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { isNotEmptyObject } from 'class-validator';
+import { Degree } from 'src/auth/types/Degree';
 
 @Injectable()
 export class ApplicationService {
@@ -297,6 +298,12 @@ export class ApplicationService {
       },
     });
 
+    const degreeMap: Record<string, Degree> = {
+      '1': Degree.BACHELOR,
+      '3': Degree.MASTER,
+      '5': Degree.DOCTOR,
+    };
+
     return applications.map((app) => ({
       appId: app.id,
       studentId: app.student.id,
@@ -304,6 +311,7 @@ export class ApplicationService {
       lastName: app.student.lastName,
       scholarName: app.scholarship.name,
       requestAmount: app.requestAmount,
+      degress: degreeMap[app.student.id.charAt(4)],
     }));
   }
 
