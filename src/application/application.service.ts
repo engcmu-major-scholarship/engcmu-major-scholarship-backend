@@ -278,15 +278,6 @@ export class ApplicationService {
               },
             ],
           },
-          {
-            student: app.student,
-            semester: {
-              year: {
-                year,
-              },
-              semester: LessThan(semester),
-            },
-          },
         ])),
       })),
     );
