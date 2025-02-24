@@ -25,6 +25,7 @@ import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-b
 import { CreateInformationFilesDto } from './dto/create-information-files.dto';
 import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
 import { UpdateInformationFilesDto } from './dto/update-information-files.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {
@@ -68,14 +69,30 @@ export class InformationController {
     return this.informationService.create(createInformationDto, files);
   }
 
+  @Public()
   @Get()
-  findAll() {
-    return this.informationService.findAll();
+  findAllPublic() {
+    return this.informationService.findAllPublic();
   }
 
+  @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.informationService.findOne(+id);
+  findOnePublic(@Param('id', ParseIntPipe) id: number) {
+    return this.informationService.findOnePublic(id);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('admin')
+  findAllAdmin() {
+    return this.informationService.findAllAdmin();
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('admin/:id')
+  findOneAdmin(@Param('id', ParseIntPipe) id: number) {
+    return this.informationService.findOneAdmin(id);
   }
 
   @ApiBearerAuth()
