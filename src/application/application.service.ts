@@ -406,6 +406,10 @@ export class ApplicationService {
           adminApprovalTime: Not(IsNull()),
         },
       ],
+      relations: {
+        scholarship: true,
+        semester: { year: true },
+      },
     });
 
     return application.map((app) => ({
