@@ -264,11 +264,19 @@ export class ApplicationService {
         isFirstTime: !(await this.applicationRepository.existsBy([
           {
             student: app.student,
-            semester: {
-              year: {
-                year: LessThan(year),
+            semester: [
+              {
+                year: {
+                  year: LessThan(year),
+                },
               },
-            },
+              {
+                year: {
+                  year,
+                },
+                semester: LessThan(semester),
+              },
+            ],
           },
           {
             student: app.student,
