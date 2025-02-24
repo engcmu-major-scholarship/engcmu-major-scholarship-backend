@@ -421,40 +421,34 @@ export class ApplicationService {
   }
 
   async findStudentFromSearch(search: string) {
-    try {
-      if (!search || search.trim() === '') {
-        throw new BadRequestException('Search cannot be empty.');
-      }
-      const studentList = await this.applicationRepository.find({
-        where: [
+    if (!search || search.trim() === '') {
+      throw new BadRequestException('Search cannot be empty.');
+    }
+
+    const studentList = await this.applicationRepository.find({
+      where: {
+        student: [
           {
-            student: {
-              id: ILike(`%${search}%`),
-            },
+            id: ILike(`%${search}%`),
           },
           {
-            student: {
-              firstName: ILike(`%${search}%`),
-            },
+            firstName: ILike(`%${search}%`),
           },
           {
-            student: {
-              lastName: ILike(`%${search}%`),
-            },
+            lastName: ILike(`%${search}%`),
           },
         ],
-        relations: {
-          student: true,
-        },
-      });
+        adminApprovalTime: Not(IsNull()),
+      },
+      relations: {
+        student: true,
+      },
+    });
 
-      return studentList.map((list) => ({
-        StudentId: list.student.id,
-        firstname: list.student.firstName,
-        lastname: list.student.lastName,
-      }));
-    } catch (error) {
-      throw new NotFoundException(`No found for : ${search}`);
-    }
+    return studentList.map((list) => ({
+      StudentId: list.student.id,
+      firstname: list.student.firstName,
+      lastname: list.student.lastName,
+    }));
   }
 }
