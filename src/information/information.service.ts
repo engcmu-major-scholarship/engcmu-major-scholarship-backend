@@ -51,12 +51,60 @@ export class InformationService {
     );
   }
 
-  findAll() {
-    return `This action returns all information`;
+  async findAllPublic() {
+    const informations = await this.informationRepository.findBy({
+      published: true,
+    });
+
+    return informations.map((information) => ({
+      id: information.id,
+      name: information.name,
+      description: information.description,
+    }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} information`;
+  async findOnePublic(id: number) {
+    const information = await this.informationRepository.findOneBy({
+      id,
+      published: true,
+    });
+
+    if (!information) {
+      throw new NotFoundException('Information not found');
+    }
+
+    return {
+      name: information.name,
+      description: information.description,
+      docLink: information.PDFDocument,
+      published: information.published,
+    };
+  }
+
+  async findAllAdmin() {
+    const informations = await this.informationRepository.find();
+    return informations.map((information) => ({
+      id: information.id,
+      name: information.name,
+      description: information.description,
+    }));
+  }
+
+  async findOneAdmin(id: number) {
+    const information = await this.informationRepository.findOneBy({
+      id,
+    });
+
+    if (!information) {
+      throw new NotFoundException('Information not found');
+    }
+
+    return {
+      name: information.name,
+      description: information.description,
+      docLink: information.PDFDocument,
+      published: information.published,
+    };
   }
 
   async update(
