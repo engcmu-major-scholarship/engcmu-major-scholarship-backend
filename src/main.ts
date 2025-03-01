@@ -9,7 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://scholarship.se.cpe.eng.cmu.ac.th',
+      'https://scholarhub.se.cpe.eng.cmu.ac.th ',
       'https://staging.yamami.tech',
     ],
   });
