@@ -18,7 +18,7 @@ import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { isNotEmptyObject } from 'class-validator';
 import { Degree } from 'src/auth/types/Degree';
-import { ApplicationApprove } from './dto/application-approve.dto';
+import { ApplicationApproveDto } from './dto/application-approve.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -451,41 +451,21 @@ export class ApplicationService {
       lastname: list.student.lastName,
     }));
   }
-  async findApplication(id: number) {
-    const application = await this.applicationRepository.findOne({
-      where: {
-        id,
-      },
-      relations: {
-        scholarship: true,
-      },
-    });
-    if (!application) {
-      throw new NotFoundException('Application not found');
-    }
-    return {
-      docLink: await this.s3Service.getFileUrl(
-        'major-scholar-app-doc',
-        application.applicationDocument,
-      ),
-    };
-  }
-  async approveApplication(id: number, applicationApprove: ApplicationApprove) {
-    console.log(`Looking for application with ID: ${id}`);
+
+  async approveApplication(
+    id: number,
+    applicationApprove: ApplicationApproveDto,
+  ) {
     const application = await this.applicationRepository.findOne({
       where: { id },
-      relations: { scholarship: true },
     });
 
     if (!application) {
-      console.error(`❌ Application with ID ${id} not found in database.`);
       throw new NotFoundException('Application not found');
     }
     application.adminApprovalTime = new Date();
-    application.approvalComment = applicationApprove.comment ?? null;
+    application.approvalComment = applicationApprove.comment;
 
     await this.applicationRepository.save(application);
-
-    return { message: 'Application approved successfully', application };
   }
 }

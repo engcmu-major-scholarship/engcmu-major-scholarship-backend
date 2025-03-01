@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class ApplicationApprove {
+export class ApplicationApproveDto {
   @IsOptional()
   @IsString()
   comment: string | null;
