@@ -18,6 +18,7 @@ import { UpdateApplicationFilesDto } from './dto/update-application-files.dto';
 import { Scholarship } from 'src/models/scholarship.entity';
 import { isNotEmptyObject } from 'class-validator';
 import { Degree } from 'src/auth/types/Degree';
+import { ApplicationApproveDto } from './dto/application-approve.dto';
 
 @Injectable()
 export class ApplicationService {
@@ -449,5 +450,22 @@ export class ApplicationService {
       firstname: list.student.firstName,
       lastname: list.student.lastName,
     }));
+  }
+
+  async approveApplication(
+    id: number,
+    applicationApprove: ApplicationApproveDto,
+  ) {
+    const application = await this.applicationRepository.findOne({
+      where: { id },
+    });
+
+    if (!application) {
+      throw new NotFoundException('Application not found');
+    }
+    application.adminApprovalTime = new Date();
+    application.approvalComment = applicationApprove.comment;
+
+    await this.applicationRepository.save(application);
   }
 }
