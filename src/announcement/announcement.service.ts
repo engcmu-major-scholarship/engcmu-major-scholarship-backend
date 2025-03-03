@@ -30,22 +30,22 @@ export class AnnouncementService {
         name: createAnnouncementDto.name,
       })
     ) {
-      throw new UnprocessableEntityException('Information already exists');
+      throw new UnprocessableEntityException('Announcement already exists');
     }
 
-    const informationDocKey = createAnnouncementDto.name;
+    const announcementDocKey = createAnnouncementDto.name;
 
-    const information = this.announcementRepository.create({
+    const announcement = this.announcementRepository.create({
       name: createAnnouncementDto.name,
       description: createAnnouncementDto.description,
-      PDFDocument: informationDocKey,
+      PDFDocument: announcementDocKey,
       published: createAnnouncementDto.published,
     });
-    await this.announcementRepository.save(information);
+    await this.announcementRepository.save(announcement);
 
     await this.s3Service.uploadFile(
       'major-scholar-announcement-doc',
-      informationDocKey,
+      announcementDocKey,
       files.doc[0].buffer,
       files.doc[0].mimetype,
     );
@@ -76,7 +76,12 @@ export class AnnouncementService {
     return {
       name: announcement.name,
       description: announcement.description,
-      docLink: announcement.PDFDocument,
+      docLink: announcement.PDFDocument
+        ? await this.s3Service.getFileUrl(
+            'major-scholar-announcement-doc',
+            announcement.PDFDocument,
+          )
+        : null,
       published: announcement.published,
     };
   }
@@ -112,15 +117,15 @@ export class AnnouncementService {
     updateAnnouncementDto: UpdateAnnouncementDto,
     files: UpdateAnnouncementFilesDto,
   ) {
-    const information = await this.announcementRepository.findOneBy({
+    const announcement = await this.announcementRepository.findOneBy({
       id,
     });
 
-    if (!information) {
-      throw new NotFoundException('Information not found');
+    if (!announcement) {
+      throw new NotFoundException('Announcement not found');
     }
 
-    const informationDocKey = information.PDFDocument; // FIXME: Posible bug by overwriting file when change name
+    const announcementDocKey = announcement.PDFDocument; // FIXME: Posible bug by overwriting file when change name
     if (isNotEmptyObject(updateAnnouncementDto)) {
       await this.announcementRepository.update(id, {
         name: updateAnnouncementDto.name,
@@ -133,8 +138,8 @@ export class AnnouncementService {
 
     if (files.doc) {
       await this.s3Service.uploadFile(
-        'major-scholar-information-doc',
-        informationDocKey,
+        'major-scholar-announcement-doc',
+        announcementDocKey,
         files.doc[0].buffer,
         files.doc[0].mimetype,
       );

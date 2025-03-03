@@ -33,7 +33,7 @@ const apiBodyOptions: ApiBodyOptions = {
     properties: {
       name: { type: 'string' },
       description: { type: 'string' },
-      informationDoc: { type: 'string', format: 'binary' },
+      doc: { type: 'string', format: 'binary' },
       published: { type: 'boolean' },
     },
   },
