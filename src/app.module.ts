@@ -10,7 +10,7 @@ import { ApplicationModule } from './application/application.module';
 import { SettingModule } from './setting/setting.module';
 import { StudentModule } from './student/student.module';
 import { AdvisorModule } from './advisor/advisor.module';
-import { InformationModule } from './information/information.module';
+import { AnnouncementModule } from './announcement/announcement.module';
 
 @Module({
   imports: [
@@ -49,7 +49,7 @@ import { InformationModule } from './information/information.module';
     SettingModule,
     StudentModule,
     AdvisorModule,
-    InformationModule,
+    AnnouncementModule,
   ],
   controllers: [AppController],
   providers: [AppService],

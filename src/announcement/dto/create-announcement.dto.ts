@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean } from 'class-validator';
 import { FormDataTransformer } from 'src/utils/transformer/form-data.transformer';
 
-export class CreateInformationDto {
+export class CreateAnnouncementDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()

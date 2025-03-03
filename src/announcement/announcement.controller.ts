@@ -10,9 +10,9 @@ import {
   UploadedFiles,
   ParseIntPipe,
 } from '@nestjs/common';
-import { InformationService } from './information.service';
-import { CreateInformationDto } from './dto/create-information.dto';
-import { UpdateInformationDto } from './dto/update-information.dto';
+import { AnnouncementService } from './announcement.service';
+import { CreateAnnouncementDto } from './dto/create-announcement.dto';
+import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,10 +22,10 @@ import {
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/types/Role';
 import { FileFieldsByTypeInterceptor } from 'src/utils/interceptor/file-fields-by-type.interceptor';
-import { CreateInformationFilesDto } from './dto/create-information-files.dto';
+import { CreateAnnouncementFilesDto } from './dto/create-announcement-files.dto';
 import { ParseFileFieldsPipe } from 'src/utils/pipe/parse-file-fields.pipe';
-import { UpdateInformationFilesDto } from './dto/update-information-files.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { UpdateAnnouncementFilesDto } from './dto/update-announcement-files.dto';
 
 const apiBodyOptions: ApiBodyOptions = {
   schema: {
@@ -39,9 +39,9 @@ const apiBodyOptions: ApiBodyOptions = {
   },
 };
 
-@Controller('information')
-export class InformationController {
-  constructor(private readonly informationService: InformationService) {}
+@Controller('announcement')
+export class AnnouncementController {
+  constructor(private readonly announcementService: AnnouncementService) {}
 
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
@@ -49,50 +49,50 @@ export class InformationController {
   @Roles(Role.ADMIN)
   @Post()
   @UseInterceptors(
-    FileFieldsByTypeInterceptor<CreateInformationFilesDto>({
-      informationDoc: { maxCount: 1 },
+    FileFieldsByTypeInterceptor<CreateAnnouncementFilesDto>({
+      doc: { maxCount: 1 },
     }),
   )
   create(
-    @Body() createInformationDto: CreateInformationDto,
+    @Body() createAnnouncementDto: CreateAnnouncementDto,
     @UploadedFiles(
-      new ParseFileFieldsPipe<CreateInformationFilesDto>({
-        informationDoc: {
+      new ParseFileFieldsPipe<CreateAnnouncementFilesDto>({
+        doc: {
           type: 'application/pdf',
           required: true,
           itemCount: 1,
         },
       }),
     )
-    files: CreateInformationFilesDto,
+    files: CreateAnnouncementFilesDto,
   ) {
-    return this.informationService.create(createInformationDto, files);
+    return this.announcementService.create(createAnnouncementDto, files);
   }
 
   @Public()
   @Get()
   findAllPublic() {
-    return this.informationService.findAllPublic();
+    return this.announcementService.findAllPublic();
   }
 
   @Public()
   @Get(':id')
   findOnePublic(@Param('id', ParseIntPipe) id: number) {
-    return this.informationService.findOnePublic(id);
+    return this.announcementService.findOnePublic(id);
   }
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('admin')
   findAllAdmin() {
-    return this.informationService.findAllAdmin();
+    return this.announcementService.findAllAdmin();
   }
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('admin/:id')
   findOneAdmin(@Param('id', ParseIntPipe) id: number) {
-    return this.informationService.findOneAdmin(id);
+    return this.announcementService.findOneAdmin(id);
   }
 
   @ApiBearerAuth()
@@ -101,28 +101,28 @@ export class InformationController {
   @Roles(Role.ADMIN)
   @Patch(':id')
   @UseInterceptors(
-    FileFieldsByTypeInterceptor<UpdateInformationFilesDto>({
-      informationDoc: { maxCount: 1 },
+    FileFieldsByTypeInterceptor<UpdateAnnouncementFilesDto>({
+      doc: { maxCount: 1 },
     }),
   )
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateInformationDto: UpdateInformationDto,
+    @Body() updateAnnouncementDto: UpdateAnnouncementDto,
     @UploadedFiles(
-      new ParseFileFieldsPipe<UpdateInformationFilesDto>({
-        informationDoc: {
+      new ParseFileFieldsPipe<UpdateAnnouncementFilesDto>({
+        doc: {
           type: 'application/pdf',
           itemCount: 1,
         },
       }),
     )
-    files: UpdateInformationFilesDto,
+    files: UpdateAnnouncementFilesDto,
   ) {
-    return this.informationService.update(id, updateInformationDto, files);
+    return this.announcementService.update(id, updateAnnouncementDto, files);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.informationService.remove(+id);
+    return this.announcementService.remove(+id);
   }
 }
