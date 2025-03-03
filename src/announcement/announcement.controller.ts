@@ -59,7 +59,6 @@ export class AnnouncementController {
       new ParseFileFieldsPipe<CreateAnnouncementFilesDto>({
         doc: {
           type: 'application/pdf',
-          required: true,
           itemCount: 1,
         },
       }),
@@ -75,12 +74,6 @@ export class AnnouncementController {
     return this.announcementService.findAllPublic();
   }
 
-  @Public()
-  @Get(':id')
-  findOnePublic(@Param('id', ParseIntPipe) id: number) {
-    return this.announcementService.findOnePublic(id);
-  }
-
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get('admin')
@@ -93,6 +86,12 @@ export class AnnouncementController {
   @Get('admin/:id')
   findOneAdmin(@Param('id', ParseIntPipe) id: number) {
     return this.announcementService.findOneAdmin(id);
+  }
+
+  @Public()
+  @Get(':id')
+  findOnePublic(@Param('id', ParseIntPipe) id: number) {
+    return this.announcementService.findOnePublic(id);
   }
 
   @ApiBearerAuth()

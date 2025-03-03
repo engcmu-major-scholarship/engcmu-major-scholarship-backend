@@ -33,7 +33,8 @@ export class AnnouncementService {
       throw new UnprocessableEntityException('Announcement already exists');
     }
 
-    const announcementDocKey = createAnnouncementDto.name;
+    const announcementDocKey =
+      files.doc && files.doc[0] ? createAnnouncementDto.name : null;
 
     const announcement = this.announcementRepository.create({
       name: createAnnouncementDto.name,
@@ -43,12 +44,14 @@ export class AnnouncementService {
     });
     await this.announcementRepository.save(announcement);
 
-    await this.s3Service.uploadFile(
-      'major-scholar-announcement-doc',
-      announcementDocKey,
-      files.doc[0].buffer,
-      files.doc[0].mimetype,
-    );
+    if (files.doc && files.doc[0]) {
+      await this.s3Service.uploadFile(
+        'major-scholar-announcement-doc',
+        announcementDocKey,
+        files.doc[0].buffer,
+        files.doc[0].mimetype,
+      );
+    }
   }
 
   async findAllPublic() {
@@ -107,7 +110,12 @@ export class AnnouncementService {
     return {
       name: announcement.name,
       description: announcement.description,
-      docLink: announcement.PDFDocument,
+      docLink: announcement.PDFDocument
+        ? await this.s3Service.getFileUrl(
+            'major-scholar-announcement-doc',
+            announcement.PDFDocument,
+          )
+        : null,
       published: announcement.published,
     };
   }

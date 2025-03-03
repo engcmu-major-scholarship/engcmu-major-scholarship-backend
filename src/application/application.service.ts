@@ -78,6 +78,8 @@ export class ApplicationService {
       file.doc[0].buffer,
       file.doc[0].mimetype,
     );
+
+    return application.id;
   }
 
   async update(
