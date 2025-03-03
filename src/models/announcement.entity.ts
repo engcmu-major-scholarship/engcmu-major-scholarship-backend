@@ -11,7 +11,7 @@ export class Announcement extends BaseEntity {
   @Column({ type: 'text' })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   PDFDocument: string;
 
   @Column()
