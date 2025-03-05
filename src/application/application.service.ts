@@ -263,6 +263,7 @@ export class ApplicationService {
         firstName: app.student.firstName,
         lastName: app.student.lastName,
         scholarName: app.scholarship.name,
+        defaultAmount: app.scholarship.amount,
         requestAmount: app.requestAmount,
         isFirstTime: !(await this.applicationRepository.existsBy([
           {
