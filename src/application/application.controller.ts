@@ -8,7 +8,6 @@ import {
   Post,
   UploadedFiles,
   UseInterceptors,
-  Query,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -142,13 +141,6 @@ export class ApplicationController {
   @Get('history/:studentId')
   getApplicationHistoryByStudentID(@Param('studentId') stuId: string) {
     return this.applicationService.findApplicationHistoryByStudentId(stuId);
-  }
-
-  @ApiBearerAuth()
-  @Roles(Role.ADMIN)
-  @Get()
-  getfindStudentFromSearch(@Query('search') search: string) {
-    return this.applicationService.findStudentFromSearch(search);
   }
 
   @ApiBearerAuth()

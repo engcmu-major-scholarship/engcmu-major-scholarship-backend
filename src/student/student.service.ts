@@ -144,12 +144,13 @@ export class StudentService {
         : null,
     };
   }
+
   async findStudentFromSearch(search: string) {
     if (!search || search.trim() === '') {
       throw new BadRequestException('Search cannot be empty.');
     }
 
-    const studentList = await this.studentRepository.find({
+    const students = await this.studentRepository.find({
       where: [
         {
           id: ILike(`%${search}%`),
@@ -170,14 +171,12 @@ export class StudentService {
           },
         },
       ],
-      relations: {
-        application: true,
-      },
     });
-    return studentList.map((list) => ({
-      StudentId: list.id,
-      firstname: list.firstName,
-      lastname: list.lastName,
+
+    return students.map((student) => ({
+      StudentId: student.id,
+      firstname: student.firstName,
+      lastname: student.lastName,
     }));
   }
 }
