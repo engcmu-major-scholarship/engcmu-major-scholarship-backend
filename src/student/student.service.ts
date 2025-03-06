@@ -110,10 +110,13 @@ export class StudentService {
     }
   }
 
-  async getApproveStudentDoc(studentId: string) {
+  async getStudentDoc(studentId: string) {
     const student = await this.studentRepository.findOne({
       where: {
         id: studentId,
+      },
+      relations: {
+        advisor: true,
       },
     });
 
@@ -122,6 +125,7 @@ export class StudentService {
     }
 
     return {
+      advisorName: student.advisor?.name,
       studentIDCardDocLink: student.studentIdCard
         ? await this.s3Service.getFileUrl(
             'major-scholar-student-id-card',

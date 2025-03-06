@@ -73,7 +73,7 @@ export class StudentController {
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @Get(':studentId')
-  getApproveStudentDoc(@Param('studentId') studentId: string) {
-    return this.studentService.getApproveStudentDoc(studentId);
+  getStudentDoc(@Param('studentId') studentId: string) {
+    return this.studentService.getStudentDoc(studentId);
   }
 }

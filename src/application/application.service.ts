@@ -177,7 +177,7 @@ export class ApplicationService {
       }
       return {
         scholarId: application.scholarship.id,
-        budget: application.requestAmount,
+        requestAmount: application.requestAmount,
         doc: await this.s3Service.getFileUrl(
           'major-scholar-app-doc',
           application.applicationDocument,
@@ -204,7 +204,7 @@ export class ApplicationService {
 
       return {
         scholarId: application.scholarship.id,
-        budget: application.requestAmount,
+        requestAmount: application.requestAmount,
         doc: await this.s3Service.getFileUrl(
           'major-scholar-app-doc',
           application.applicationDocument,
@@ -418,7 +418,8 @@ export class ApplicationService {
 
     return application.map((app) => ({
       scholarName: app.scholarship.name,
-      budget: app.scholarship.amount,
+      defaultAmount: app.scholarship.amount,
+      requestAmount: app.requestAmount,
       year: app.semester.year.year,
       semester: app.semester.semester,
     }));
