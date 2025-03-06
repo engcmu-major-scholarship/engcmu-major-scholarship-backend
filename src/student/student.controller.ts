@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -68,6 +69,13 @@ export class StudentController {
     @User() user: TokenPayload,
   ) {
     return this.studentService.updateStudent(updateStudentDto, files, user.sub);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @Get('search')
+  getfindStudentFromSearch(@Query('search') search: string) {
+    return this.studentService.findStudentFromSearch(search);
   }
 
   @ApiBearerAuth()
