@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Advisor } from './advisor.entity';
+import { Application } from './application.entity';
 
 @Entity()
 export class Student extends BaseEntity {
@@ -34,4 +36,7 @@ export class Student extends BaseEntity {
 
   @Column({ nullable: true, default: null })
   bookBank: string | null;
+
+  @OneToMany(() => Application, (application) => application.student)
+  application: Application[];
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -6,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from 'src/models/student.entity';
 import { S3Service } from 'src/s3/s3.service';
-import { Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { UpdateStudentFilesDto } from './dto/update-student-files.dto';
 import { isNotEmptyObject } from 'class-validator';
@@ -125,6 +126,9 @@ export class StudentService {
     }
 
     return {
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName,
       advisorName: student.advisor?.name,
       studentIDCardDocLink: student.studentIdCard
         ? await this.s3Service.getFileUrl(
@@ -139,5 +143,40 @@ export class StudentService {
           )
         : null,
     };
+  }
+
+  async findStudentFromSearch(search: string) {
+    if (!search || search.trim() === '') {
+      throw new BadRequestException('Search cannot be empty.');
+    }
+
+    const students = await this.studentRepository.find({
+      where: [
+        {
+          id: ILike(`%${search}%`),
+          application: {
+            adminApprovalTime: Not(IsNull()),
+          },
+        },
+        {
+          firstName: ILike(`%${search}%`),
+          application: {
+            adminApprovalTime: Not(IsNull()),
+          },
+        },
+        {
+          lastName: ILike(`%${search}%`),
+          application: {
+            adminApprovalTime: Not(IsNull()),
+          },
+        },
+      ],
+    });
+
+    return students.map((student) => ({
+      StudentId: student.id,
+      firstname: student.firstName,
+      lastname: student.lastName,
+    }));
   }
 }
