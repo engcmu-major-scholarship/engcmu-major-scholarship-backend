@@ -438,9 +438,15 @@ export class ApplicationService {
               lastName: ILike(`%${search}%`),
             },
           },
+          {
+            scholarship: {
+              name: ILike(`%${search}%`),
+            },
+          },
         ],
         relations: {
           student: true,
+          scholarship: true,
         },
       });
 
